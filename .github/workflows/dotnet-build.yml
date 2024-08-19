@@ -1,0 +1,17 @@
+on:
+  workflow_call:
+    inputs:
+      solution_path:
+        required: true
+        type: string
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
+
+    - name: Build
+      run: dotnet build ${{ inputs.solution_path }}  -c Release

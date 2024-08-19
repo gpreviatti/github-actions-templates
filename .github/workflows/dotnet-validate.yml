@@ -1,0 +1,44 @@
+on:
+  workflow_call:
+    inputs:
+      unit_test_project_path:
+        required: true
+        type: string
+      domain_stryker_config_path:
+        required: true
+        type: string
+      application_stryker_config_path:
+        required: true
+        type: string
+      integration_test_project_path:
+        required: true
+        type: string
+      docker_compose_file_path:
+        required: true
+        type: string
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
+
+    - name: Unit Tests
+      run: dotnet test ${{ inputs.unit_test_project_path }}
+
+    - name: Install Stryker
+      run: dotnet tool install -g dotnet-stryker
+
+    - name: Run Stryker Domain
+      run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.domain_stryker_config_path}}
+    
+    - name: Run Stryker Application
+      run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.application_stryker_config_path}}
+
+    - name: Start Docker Compose
+      run: docker compose -f ${{ inputs.docker_compose_file_path }} up -d && sleep 10
+
+    - name: Integration Tests
+      run: dotnet test ${{ inputs.integration_test_project_path}}
