@@ -16,6 +16,10 @@ on:
       docker_compose_file_path:
         required: true
         type: string
+      dotnet_version:
+        required: true
+        type: string
+        default: '8.x'
 
 jobs:
   validate:
@@ -24,6 +28,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Unit Tests
       run: dotnet test ${{ inputs.unit_test_project_path }}

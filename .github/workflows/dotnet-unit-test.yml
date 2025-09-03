@@ -4,6 +4,10 @@ on:
       test_project_path:
         required: true
         type: string
+      dotnet_version:
+        required: true
+        type: string
+        default: '8.x'
 
 jobs:
   unit-tests:
@@ -12,6 +16,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Test
       run: dotnet test ${{ inputs.test_project_path }}
