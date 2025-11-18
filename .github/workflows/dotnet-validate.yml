@@ -42,9 +42,11 @@ jobs:
       run: dotnet tool install -g dotnet-stryker
 
     - name: Run Stryker Domain
+      working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}
       run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.domain_stryker_config_path}} -V ${{inputs.stryker_log_level}}
     
     - name: Run Stryker Application
+      working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}
       run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.application_stryker_config_path}} -V ${{inputs.stryker_log_level}}
 
     - name: Start Docker Compose
