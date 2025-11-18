@@ -20,4 +20,4 @@ jobs:
         dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Build
-      run: dotnet build ${{ inputs.solution_path }}  -c Release
+      run: dotnet build ${{ inputs.solution_path }} -c Release
