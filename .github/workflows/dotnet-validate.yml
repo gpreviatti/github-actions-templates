@@ -28,6 +28,10 @@ on:
         required: true
         type: string
         default: '8.x'
+      dotnet_test_verbosity:
+        required: false
+        type: string
+        default: 'n'
 
 jobs:
   validate:
@@ -40,7 +44,7 @@ jobs:
         dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Unit Tests
-      run: dotnet test ${{ inputs.unit_test_project_path }}
+      run: dotnet test ${{ inputs.unit_test_project_path }} -v {{inputs.dotnet_test_verbosity}}
 
     - name: Install Stryker
       if: ${{ inputs.stryker_enable }}
@@ -58,4 +62,4 @@ jobs:
       run: docker compose -f ${{ inputs.docker_compose_file_path }} up -d && sleep 10
 
     - name: Integration Tests
-      run: dotnet test ${{ inputs.integration_test_project_path}}
+      run: dotnet test ${{ inputs.integration_test_project_path}} -v {{inputs.dotnet_test_verbosity}}
