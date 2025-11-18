@@ -11,7 +11,7 @@ on:
         required: true
         type: string
       stryker_log_level:
-        required: true
+        required: false
         type: string
         default: 'info'
       integration_test_project_path:
