@@ -1,6 +1,10 @@
 on:
   workflow_call:
     inputs:
+      stryker_enable:
+        required: false
+        type: boolean
+        default: true
       unit_test_project_path:
         required: true
         type: string
@@ -39,12 +43,15 @@ jobs:
       run: dotnet test ${{ inputs.unit_test_project_path }}
 
     - name: Install Stryker
+      if: ${{ inputs.stryker_enable }}
       run: dotnet tool install -g dotnet-stryker
 
     - name: Run Stryker Domain
+      if: ${{ inputs.stryker_enable }}
       run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.domain_stryker_config_path}} -V ${{inputs.stryker_log_level}}
     
     - name: Run Stryker Application
+      if: ${{ inputs.stryker_enable }}
       run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.application_stryker_config_path}} -V ${{inputs.stryker_log_level}}
 
     - name: Start Docker Compose
