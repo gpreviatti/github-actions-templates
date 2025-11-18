@@ -28,4 +28,4 @@ jobs:
         run: dotnet tool install -g dotnet-stryker
 
       - name: Run Stryker
-        run: dotnet stryker -tp ${{inputs.test_project_path}} -f ${{inputs.stryker_config_path}} -Verbosity Debug
+        run: dotnet stryker -tp ${{inputs.test_project_path}} -f ${{inputs.stryker_config_path}} -V Debug
