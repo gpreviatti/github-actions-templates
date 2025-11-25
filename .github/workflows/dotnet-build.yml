@@ -10,7 +10,7 @@ on:
         default: '8.x'
 
 jobs:
-  unit-tests:
+  build:
     runs-on: ubuntu-latest
 
     steps:
