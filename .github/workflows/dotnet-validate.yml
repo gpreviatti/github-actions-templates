@@ -32,7 +32,7 @@ on:
         required: true
         type: string
         default: '8.x'
-      dotnet_test_verbosity:
+      unit_test_verbosity:
         required: false
         type: string
         default: 'n'
@@ -63,7 +63,7 @@ jobs:
       organization: ${{ inputs.organization }}
       project: ${{ inputs.project }}
       dotnet_version: ${{ inputs.dotnet_version }}
-      dotnet_test_verbosity: ${{ inputs.dotnet_test_verbosity }}
+      unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
     secrets:
       sonar_token: ${{ secrets.sonar_token }}
