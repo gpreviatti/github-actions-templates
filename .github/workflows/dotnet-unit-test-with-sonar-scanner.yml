@@ -85,7 +85,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.exclusions="**/Migrations/**" /d:sonar.exclusions="**/*Tests/**" /d:sonar.exclusions="**/*tests/**"
           dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.dotnet_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.exclusions="**/Migrations/**" /d:sonar.exclusions="**/*Tests/**" /d:sonar.exclusions="**/*tests/**"
 
