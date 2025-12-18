@@ -25,6 +25,29 @@ on:
         required: false
         type: string
         default: 'n'
+      stryker_enable:
+        required: false
+        type: boolean
+        default: true
+      unit_test_project_path:
+        required: true
+        type: string
+      domain_stryker_config_path:
+        required: true
+        type: string
+      application_stryker_config_path:
+        required: true
+        type: string
+      stryker_log_level:
+        required: false
+        type: string
+        default: 'info'
+      integration_test_project_path:
+        required: true
+        type: string
+      docker_compose_file_path:
+        required: true
+        type: string
     secrets:
       sonar_token:
         required: true
@@ -38,9 +61,8 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
+
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
@@ -67,14 +89,24 @@ jobs:
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
 
-      - name: Run Unit Tests
-        run: dotnet test ${{ inputs.test_project_path }} -v ${{inputs.dotnet_test_verbosity}} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"
-          
-      - name: Build and analyze
+      - name: test and analyze
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml"
-          dotnet build
+          dotnet test ${{ inputs.test_project_path }} -v ${{inputs.dotnet_test_verbosity}} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
+
+      - name: Install Stryker
+        if: ${{ inputs.stryker_enable }}
+        run: dotnet tool install -g dotnet-stryker
+
+      - name: Run Stryker Domain
+        if: ${{ inputs.stryker_enable }}
+        run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.domain_stryker_config_path}} -V ${{inputs.stryker_log_level}}
+      
+      - name: Run Stryker Application
+        if: ${{ inputs.stryker_enable }}
+        run: dotnet stryker -tp ${{inputs.unit_test_project_path}} -f ${{inputs.application_stryker_config_path}} -V ${{inputs.stryker_log_level}}
+
