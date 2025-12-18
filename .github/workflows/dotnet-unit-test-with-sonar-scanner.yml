@@ -44,7 +44,7 @@ on:
         required: true
 jobs:
   build:
-    name: Build and analyze
+    name: Build, Test, SonarQube Analysis and Stryker
     runs-on: windows-latest
     steps:
       - name: Set up JDK 17
