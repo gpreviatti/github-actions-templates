@@ -55,6 +55,7 @@ jobs:
     with:
       solution_path: ${{ inputs.solution_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
+      build_mode: 'Debug'
 
   unit-tests:
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml

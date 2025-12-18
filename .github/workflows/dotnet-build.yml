@@ -8,6 +8,10 @@ on:
         required: true
         type: string
         default: '8.x'
+      build_mode:
+        required: false
+        type: string
+        default: 'Release'
 
 jobs:
   build:
@@ -20,4 +24,4 @@ jobs:
         dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Build
-      run: dotnet build ${{ inputs.solution_path }} -c Release
+      run: dotnet build ${{ inputs.solution_path }} -c ${{ inputs.build_mode }}
