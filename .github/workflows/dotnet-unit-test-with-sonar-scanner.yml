@@ -87,7 +87,7 @@ jobs:
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.exclusions="**/Migrations/**,**/*Tests/**,**/*tests/**"
           dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.dotnet_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end
 
       - name: Install Stryker
         if: ${{ inputs.stryker_enable }}
