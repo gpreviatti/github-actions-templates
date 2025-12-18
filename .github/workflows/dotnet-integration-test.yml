@@ -16,11 +16,6 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ inputs.dotnet_version }}
-
     - name: Start Docker Compose
       run: docker compose -f ${{ inputs.docker_compose_file_path }} up -d && sleep 10
 

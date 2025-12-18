@@ -17,11 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ inputs.dotnet_version }}
-      
     - name: Build
       run: dotnet build -c Release
       

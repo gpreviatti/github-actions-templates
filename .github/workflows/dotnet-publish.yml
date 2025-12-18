@@ -50,12 +50,6 @@ on:
         required: true
 
 jobs:
-  build:
-    uses: ./.github/workflows/dotnet-build.yml
-    with:
-      solution_path: ${{ inputs.solution_path }}
-      dotnet_version: ${{ inputs.dotnet_version }}
-
   unit-tests:
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
