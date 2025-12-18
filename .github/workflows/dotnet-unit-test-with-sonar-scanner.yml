@@ -18,9 +18,6 @@ on:
         required: true
         type: string
         default: '8.x'
-      test_project_path:
-        required: true
-        type: string
       dotnet_test_verbosity:
         required: false
         type: string
@@ -42,12 +39,6 @@ on:
         required: false
         type: string
         default: 'info'
-      integration_test_project_path:
-        required: true
-        type: string
-      docker_compose_file_path:
-        required: true
-        type: string
     secrets:
       sonar_token:
         required: true
@@ -95,7 +86,7 @@ jobs:
         shell: powershell
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml"
-          dotnet test ${{ inputs.test_project_path }} -v ${{inputs.dotnet_test_verbosity}} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"
+          dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.dotnet_test_verbosity}} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
 
       - name: Install Stryker
