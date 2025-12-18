@@ -97,3 +97,9 @@ jobs:
       test_project_path: ${{ inputs.integration_test_project_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
 
+  pack:
+    needs: [unit-tests, mutation-tests-domain, mutation-tests-application, integration-test]
+    uses: ./.github/workflows/dotnet-publish.yml
+    with:
+      solution_path: ${{ inputs.solution_path }}
+      dotnet_version: ${{ inputs.dotnet_version }}
