@@ -28,7 +28,7 @@ on:
       sonar_inclusions:
         required: false
         type: string
-        default: '**src/**'
+        default: '**src/Application**,**src/Domain**'
       sonar_exclusions:
         required: false
         type: string
