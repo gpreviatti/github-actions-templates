@@ -1,0 +1,31 @@
+name: .NET Pack
+description: Build and pack a .NET project and push the package to NuGet
+
+inputs:
+  package_version:
+    required: true
+    type: string
+  dotnet_version:
+    required: true
+    type: string
+    default: '8.x'
+secrets:
+  nuget_api_key:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
+
+    - name: Build
+      run: dotnet build -c Release
+      
+    - name: Pack
+      run: dotnet pack -p:PackageVersion=${{ inputs.package_version}}
+      
+    - name: Push to NuGet
+      run: dotnet nuget push "./bin/Release/*.nupkg" --api-key ${{secrets.nuget_api_key}} --source https://api.nuget.org/v3/index.json

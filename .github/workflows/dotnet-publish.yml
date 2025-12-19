@@ -102,7 +102,7 @@ jobs:
 
   pack:
     needs: [unit-tests, mutation-tests-domain, mutation-tests-application, integration-test]
-    uses: ./.github/workflows/dotnet-pack.yml
+    uses: ./.github/actions/dotnet-pack.yml
     with:
       solution_path: ${{ inputs.solution_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
