@@ -36,9 +36,6 @@ on:
         required: false
         type: string
         default: 'n'
-      solution_path:
-        required: true
-        type: string
       organization:
         required: true
         type: string
@@ -53,7 +50,6 @@ jobs:
   build:
     uses: ./.github/workflows/dotnet-build.yml
     with:
-      solution_path: ${{ inputs.solution_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       build_mode: 'Debug'
 
