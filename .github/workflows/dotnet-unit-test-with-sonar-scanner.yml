@@ -25,6 +25,14 @@ on:
       unit_test_project_path:
         required: true
         type: string
+      sonar_inclusions:
+        required: false
+        type: string
+        default: '**src/**'
+      sonar_exclusions:
+        required: false
+        type: string
+        default: '**Migrations/**,**tests/**'
     secrets:
       sonar_token:
         required: true
@@ -70,7 +78,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.exclusions="**/Migrations/**,**/LoadTests/**"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{inputs.sonar_inclusions}}"
           dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
 
