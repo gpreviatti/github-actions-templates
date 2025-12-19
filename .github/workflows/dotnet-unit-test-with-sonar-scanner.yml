@@ -1,0 +1,46 @@
+on:
+  workflow_call:
+    inputs:
+      organization:
+        required: true
+        type: string
+      project:
+        required: true
+        type: string
+      dotnet_version:
+        required: true
+        type: string
+        default: '8.x'
+      unit_test_verbosity:
+        required: false
+        type: string
+        default: 'n'
+      unit_test_project_path:
+        required: true
+        type: string
+      sonar_inclusions:
+        required: false
+        type: string
+        default: '**src/Application**,**src/Domain**'
+    secrets:
+      sonar_token:
+        required: true
+
+jobs:
+  unit-tests-with-sonar-scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-sonar.yml
+      - uses: ./.github/actions/dotnet-actions.yml
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
+      - name: test and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+        shell: powershell
+        run: |
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{inputs.sonar_inclusions}}"
+          dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
+
