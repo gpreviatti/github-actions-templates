@@ -30,10 +30,11 @@ jobs:
   unit-tests-with-sonar-scanner:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/setup-sonar.yml
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/dotnet-actions.yml
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
+      - uses: ./.github/actions/setup-sonar.yml
 
       - name: test and analyze
         env:

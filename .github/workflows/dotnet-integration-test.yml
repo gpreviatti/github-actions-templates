@@ -16,6 +16,7 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - uses: ./.github/actions/dotnet-actions.yml
       with:
         dotnet-version: ${{ inputs.dotnet_version }}
