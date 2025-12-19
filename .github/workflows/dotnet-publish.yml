@@ -53,14 +53,14 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/dotnet-build.yml@v1
+    uses: ./.github/workflows/dotnet-build.yml
     with:
       solution_path: ${{ inputs.solution_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       build_mode: 'Debug'
 
   unit-tests-with-sonar-scanner:
-    uses: ./.github/actions/dotnet-unit-test-with-sonar-scanner.yml@v1
+    uses: ./.github/actions/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
     with:
       organization: ${{ inputs.organization }}
@@ -73,7 +73,7 @@ jobs:
 
   mutation-tests-domain:
     needs: build
-    uses: ./.github/workflows/dotnet-mutation-test.yml@v1
+    uses: ./.github/workflows/dotnet-mutation-test.yml
     if: ${{ inputs.stryker_enable }}
     with:
       test_project_path: ${{ inputs.unit_test_project_path }}
@@ -83,7 +83,7 @@ jobs:
 
   mutation-tests-application:
     needs: build
-    uses: ./.github/workflows/dotnet-mutation-test.yml@v1
+    uses: ./.github/workflows/dotnet-mutation-test.yml
     if: ${{ inputs.stryker_enable }}
     with:
       test_project_path: ${{ inputs.unit_test_project_path }}
@@ -92,7 +92,7 @@ jobs:
       log_level: ${{ inputs.stryker_log_level }}
 
   integration-test:
-    uses: ./.github/workflows/dotnet-integration-test.yml@v1
+    uses: ./.github/workflows/dotnet-integration-test.yml
     if: ${{ inputs.integration_test_enable }}
     needs: build
     with:
@@ -102,7 +102,7 @@ jobs:
 
   pack:
     needs: [unit-tests, mutation-tests-domain, mutation-tests-application, integration-test]
-    uses: ./.github/actions/dotnet-pack.yml@v1
+    uses: ./.github/actions/dotnet-pack.yml
     with:
       solution_path: ${{ inputs.solution_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
