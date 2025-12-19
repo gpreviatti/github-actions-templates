@@ -29,7 +29,7 @@ on:
       sonar_token:
         required: true
 jobs:
-  build:
+  unit-tests:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
