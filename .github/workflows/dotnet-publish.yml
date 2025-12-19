@@ -104,7 +104,6 @@ jobs:
     needs: [unit-tests, mutation-tests-domain, mutation-tests-application, integration-test]
     uses: ./.github/actions/dotnet-pack.yml
     with:
-      solution_path: ${{ inputs.solution_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
     secrets:
       nuget_api_key: ${{ secrets.nuget_api_key }}
