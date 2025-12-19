@@ -58,7 +58,7 @@ jobs:
       build_mode: 'Debug'
 
   unit-tests-with-sonar-scanner:
-    uses: ./.github/actions/dotnet-unit-test-with-sonar-scanner.yml
+    uses: ./.github/actions/dotnet-unit-test-with-sonar-scanner.yml@v1
     needs: build
     with:
       organization: ${{ inputs.organization }}
