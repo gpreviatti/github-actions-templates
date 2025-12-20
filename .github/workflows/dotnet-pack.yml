@@ -17,10 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/dotnet-build.yml
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
-          build-mode: 'Release'
+        
+      - name: Build
+        run: dotnet build -c Release
         
       - name: Pack
         run: dotnet pack -p:PackageVersion=${{ inputs.package_version}}
