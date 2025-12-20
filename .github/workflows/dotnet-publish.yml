@@ -42,8 +42,13 @@ on:
       project:
         required: true
         type: string
+      package_version:
+        required: true
+        type: string
     secrets:
       sonar_token:
+        required: true
+      nuget_api_key:
         required: true
 
 jobs:
@@ -94,3 +99,11 @@ jobs:
       test_project_path: ${{ inputs.integration_test_project_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
 
+  pack:
+    needs: [unit-tests-with-sonar-scanner, integration-test]
+    uses: ./.github/workflows/dotnet-pack.yml
+    with:
+      dotnet_version: ${{ inputs.dotnet_version }}
+      package_version: ${{ inputs.package_version }}
+    secrets:
+      nuget_api_key: ${{ secrets.nuget_api_key }}

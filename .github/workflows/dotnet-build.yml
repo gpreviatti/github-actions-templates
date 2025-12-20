@@ -1,18 +1,18 @@
 on:
   workflow_call:
     inputs:
-      solution_path:
-        required: true
-        type: string
       dotnet_version:
         required: true
         type: string
         default: '8.x'
+      build_mode:
+        required: false
+        type: string
+        default: 'Release'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v4
@@ -20,4 +20,4 @@ jobs:
         dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Build
-      run: dotnet build ${{ inputs.solution_path }} -c Release
+      run: dotnet build -c ${{ inputs.build_mode }}
