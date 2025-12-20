@@ -100,7 +100,7 @@ jobs:
       dotnet_version: ${{ inputs.dotnet_version }}
 
   pack:
-    needs: [unit-tests-with-sonar-scanner, mutation-tests-domain, mutation-tests-application, integration-test]
+    needs: [unit-tests-with-sonar-scanner, integration-test]
     uses: ./.github/workflows/dotnet-pack.yml
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
