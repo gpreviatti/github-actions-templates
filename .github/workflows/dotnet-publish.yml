@@ -45,6 +45,9 @@ on:
       project:
         required: true
         type: string
+      package_version:
+        required: true
+        type: string
     secrets:
       sonar_token:
         required: true
@@ -105,5 +108,6 @@ jobs:
     uses: ./.github/workflows/dotnet-pack.yml
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
+      package_version: ${{ inputs.package_version }}
     secrets:
       nuget_api_key: ${{ secrets.nuget_api_key }}
