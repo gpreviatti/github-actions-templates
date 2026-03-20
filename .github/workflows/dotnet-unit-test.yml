@@ -8,6 +8,9 @@ on:
         required: true
         type: string
         default: '8.x'
+      no_build:
+        type: boolean
+        default: false
 
 jobs:
   unit-tests:
@@ -19,4 +22,9 @@ jobs:
           dotnet-version: ${{ inputs.dotnet_version }}
 
       - name: Test
-        run: dotnet test ${{ inputs.test_project_path }}
+        run: |
+          if [ "${{ inputs.no_build }}" = "true" ]; then
+            dotnet test ${{ inputs.test_project_path }} --no-build
+          else
+            dotnet test ${{ inputs.test_project_path }}
+          fi

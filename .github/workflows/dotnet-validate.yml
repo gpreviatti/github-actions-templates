@@ -12,6 +12,9 @@ on:
         default: true
       unit_test_project_path:
         type: string
+      unit_test_no_build:
+        type: boolean
+        default: true
       domain_stryker_config_path:
         type: string
       application_stryker_config_path:
@@ -56,6 +59,7 @@ jobs:
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
+      no_build: ${{ inputs.unit_test_no_build }}
     secrets:
       sonar_token: ${{ secrets.sonar_token }}
 
