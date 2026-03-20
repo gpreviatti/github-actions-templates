@@ -43,7 +43,7 @@ jobs:
     uses: ./.github/workflows/dotnet-build.yml
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
-      build_mode: 'Debug'
+      build_mode: 'Release'
       build_path: ${{ inputs.build_path }}
 
   unit-tests-with-sonar-scanner:
@@ -57,7 +57,7 @@ jobs:
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
       no_build: ${{ inputs.test_no_build }}
-      build_configuration: 'Debug'
+      build_configuration: 'Release'
     secrets:
       sonar_token: ${{ secrets.sonar_token }}
 
@@ -90,5 +90,5 @@ jobs:
       test_project_path: ${{ inputs.integration_test_project_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       no_build: ${{ inputs.test_no_build }}
-      build_configuration: 'Debug'
+      build_configuration: 'Release'
 
