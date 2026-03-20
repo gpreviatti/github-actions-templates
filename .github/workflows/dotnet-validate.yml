@@ -7,14 +7,11 @@ on:
       stryker_enable:
         type: boolean
         default: true
-      integration_test_enable:
+      test_no_build:
         type: boolean
         default: true
       unit_test_project_path:
         type: string
-      unit_test_no_build:
-        type: boolean
-        default: true
       domain_stryker_config_path:
         type: string
       application_stryker_config_path:
@@ -59,7 +56,7 @@ jobs:
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
-      no_build: ${{ inputs.unit_test_no_build }}
+      no_build: ${{ inputs.test_no_build }}
     secrets:
       sonar_token: ${{ secrets.sonar_token }}
 
@@ -84,11 +81,12 @@ jobs:
       log_level: ${{ inputs.stryker_log_level }}
 
   integration-test:
-    if: ${{ inputs.integration_test_enable }}
+    if: ${{ inputs.integration_test_project_path != '' }}
     uses: ./.github/workflows/dotnet-integration-test.yml
     needs: build
     with:
       docker_compose_file_path: ${{ inputs.docker_compose_file_path }}
       test_project_path: ${{ inputs.integration_test_project_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
+      no_build: ${{ inputs.test_no_build }}
 

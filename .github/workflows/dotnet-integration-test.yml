@@ -11,6 +11,9 @@ on:
         required: true
         type: string
         default: '8.x'
+      no_build:
+        type: boolean
+        default: false
 
 jobs:
   integration-test:
@@ -25,4 +28,9 @@ jobs:
       run: docker compose -f ${{ inputs.docker_compose_file_path }} up -d && sleep 10
 
     - name: Test
-      run: dotnet test ${{ inputs.test_project_path}}
+      run: |
+        if ("${{ inputs.no_build }}" -eq "true") {
+          dotnet test ${{ inputs.test_project_path }} --no-build
+        } else {
+          dotnet test ${{ inputs.test_project_path }}
+        }
