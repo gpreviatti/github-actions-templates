@@ -12,14 +12,12 @@ on:
         type: string
         default: '8.x'
       unit_test_verbosity:
-        required: false
         type: string
         default: 'n'
       unit_test_project_path:
         required: true
         type: string
       sonar_inclusions:
-        required: false
         type: string
         default: '**src/Application**,**src/Domain**'
     secrets:

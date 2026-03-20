@@ -1,6 +1,9 @@
 on:
   workflow_call:
     inputs:
+      build_path:
+        type: string
+        default: '.'
       stryker_enable:
         type: boolean
         default: true
@@ -41,6 +44,7 @@ jobs:
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
       build_mode: 'Debug'
+      build_path: ${{ inputs.build_path }}
 
   unit-tests-with-sonar-scanner:
     if: ${{ inputs.unit_test_project_path != '' }}

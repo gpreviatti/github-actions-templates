@@ -4,18 +4,14 @@ on:
       test_project_path:
         required: true
         type: string
-
       stryker_config_path: 
         required: true
         type: string
-
       dotnet_version:
         required: true
         type: string
         default: '8.x'
-
       log_level:
-        required: false
         type: string
         default: 'info'
 

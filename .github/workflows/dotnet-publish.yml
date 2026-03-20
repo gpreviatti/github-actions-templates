@@ -1,6 +1,9 @@
 on:
   workflow_call:
     inputs:
+      build_path:
+        type: string
+        default: '.'
       dotnet_version:
         required: true
         type: string
@@ -18,6 +21,7 @@ jobs:
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
       build_mode: 'Debug'
+      build_path: ${{ inputs.build_path }}
 
   pack:
     needs: build
