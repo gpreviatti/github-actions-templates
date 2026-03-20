@@ -14,6 +14,9 @@ on:
       no_build:
         type: boolean
         default: false
+      build_configuration:
+        type: string
+        default: 'Release'
 
 jobs:
   integration-test:
@@ -30,7 +33,7 @@ jobs:
     - name: Test
       run: |
         if [ "${{ inputs.no_build }}" = "true" ]; then
-        dotnet test ${{ inputs.test_project_path }} --no-build
+        dotnet test ${{ inputs.test_project_path }} --no-build -c ${{ inputs.build_configuration }}
         else
-          dotnet test ${{ inputs.test_project_path }}
+          dotnet test ${{ inputs.test_project_path }} -c ${{ inputs.build_configuration }}
         fi
