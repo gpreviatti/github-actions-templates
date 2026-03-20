@@ -2,49 +2,38 @@ on:
   workflow_call:
     inputs:
       stryker_enable:
-        required: false
         type: boolean
         default: true
       integration_test_enable:
-        required: false
         type: boolean
         default: true
       unit_test_project_path:
-        required: true
         type: string
       domain_stryker_config_path:
-        required: true
         type: string
       application_stryker_config_path:
-        required: true
         type: string
       stryker_log_level:
-        required: false
         type: string
         default: 'info'
       integration_test_project_path:
-        required: true
         type: string
       docker_compose_file_path:
-        required: true
         type: string
       dotnet_version:
         required: true
         type: string
         default: '8.x'
       unit_test_verbosity:
-        required: false
         type: string
         default: 'n'
       organization:
-        required: true
         type: string
       project:
         required: true
         type: string
     secrets:
       sonar_token:
-        required: true
 
 jobs:
   build:
