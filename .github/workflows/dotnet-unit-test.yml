@@ -23,9 +23,8 @@ jobs:
 
       - name: Test
         run: |
-          if ("${{ inputs.no_build }}" = "true") {
+          if [ "${{ inputs.no_build }}" = "true" ]; then
             dotnet test ${{ inputs.test_project_path }} --no-build
-          }
-          else {
+          else
             dotnet test ${{ inputs.test_project_path }}
-          }
+          fi

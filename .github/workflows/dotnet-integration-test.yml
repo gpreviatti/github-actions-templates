@@ -28,10 +28,9 @@ jobs:
       run: docker compose -f ${{ inputs.docker_compose_file_path }} up -d && sleep 10
 
     - name: Test
-      shell: powershell
       run: |
-        if ("${{ inputs.no_build }}" -eq "true") {
-          dotnet test ${{ inputs.test_project_path }} --no-build
-        } else {
+        if [ "${{ inputs.no_build }}" = "true" ]; then
+        dotnet test ${{ inputs.test_project_path }} --no-build
+        else
           dotnet test ${{ inputs.test_project_path }}
-        }
+        fi
