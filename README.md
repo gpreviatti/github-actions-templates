@@ -123,33 +123,20 @@ Composite validation pipeline:
 
 ### `dotnet-publish.yml`
 
-Composite pipeline that includes:
+Builds and publishes NuGet package.
+
+This workflow is intentionally minimal and currently includes:
 
 - build
-- unit tests + Sonar
-- optional mutation tests (domain/application)
-- optional integration tests
 - NuGet pack + publish
 
 #### Inputs (`dotnet-publish.yml`)
 
-- `stryker_enable` (boolean, optional, default: `true`)
-- `integration_test_enable` (boolean, optional, default: `true`)
-- `unit_test_project_path` (string, required)
-- `domain_stryker_config_path` (string, required)
-- `application_stryker_config_path` (string, required)
-- `stryker_log_level` (string, optional, default: `info`)
-- `integration_test_project_path` (string, required)
-- `docker_compose_file_path` (string, required)
 - `dotnet_version` (string, required, default: `8.x`)
-- `unit_test_verbosity` (string, optional, default: `n`)
-- `organization` (string, required)
-- `project` (string, required)
 - `package_version` (string, required)
 
 #### Secrets (`dotnet-publish.yml`)
 
-- `sonar_token` (required)
 - `nuget_api_key` (required)
 
 ---
@@ -203,20 +190,8 @@ jobs:
     uses: <owner>/<repo>/.github/workflows/dotnet-publish.yml@<ref>
     with:
       dotnet_version: '8.x'
-      unit_test_project_path: tests/MyProject.UnitTests/MyProject.UnitTests.csproj
-      domain_stryker_config_path: tests/MyProject.UnitTests/stryker-domain.json
-      application_stryker_config_path: tests/MyProject.UnitTests/stryker-application.json
-      integration_test_project_path: tests/MyProject.IntegrationTests/MyProject.IntegrationTests.csproj
-      docker_compose_file_path: docker-compose.yml
-      organization: my-sonar-org
-      project: my-sonar-project
       package_version: 1.2.3
-      stryker_enable: true
-      integration_test_enable: true
-      stryker_log_level: info
-      unit_test_verbosity: n
     secrets:
-      sonar_token: ${{ secrets.SONAR_TOKEN }}
       nuget_api_key: ${{ secrets.NUGET_API_KEY }}
 ```
 
@@ -237,6 +212,6 @@ Depending on the template used, configure:
 
 - `dotnet-unit-test-with-sonar-scanner.yml` runs on `windows-latest`; others mostly run on `ubuntu-latest`.
 - Pin reusable workflow references to a tag or commit SHA for safer, reproducible pipelines.
-- `dotnet-validate.yml` validates quality gates; `dotnet-publish.yml` adds package publish on top.
+- Use `dotnet-validate.yml` for quality gates. Use `dotnet-publish.yml` when you only need build + package publish.
 
 Happy automating 🚀
