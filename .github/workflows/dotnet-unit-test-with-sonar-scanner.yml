@@ -66,9 +66,6 @@ jobs:
         run: |
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
-      
-      - name: Set unit test project path
-        run: cd ${{ inputs.unit_test_project_path }}
 
       - name: Test and Analyze With SonarQube Cloud
         env:
@@ -77,9 +74,9 @@ jobs:
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{inputs.sonar_inclusions}}"
           if ("${{ inputs.no_build }}" -eq "true") {
-            dotnet test -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
+            dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
           } else {
-            dotnet test -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
+            dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
           }
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.scanner.useSonarScannerCLI=true
 
