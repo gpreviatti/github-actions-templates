@@ -89,6 +89,5 @@ jobs:
       docker_compose_file_path: ${{ inputs.docker_compose_file_path }}
       test_project_path: ${{ inputs.integration_test_project_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
-      no_build: ${{ inputs.test_no_build }}
       build_configuration: 'Release'
 
