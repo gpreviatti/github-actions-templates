@@ -78,5 +78,5 @@ jobs:
           } else {
             dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
           }
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.scanner.useSonarScannerCLI=true
 
