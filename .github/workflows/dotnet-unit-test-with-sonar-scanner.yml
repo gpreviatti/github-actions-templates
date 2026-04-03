@@ -2,13 +2,12 @@ on:
   workflow_call:
     inputs:
       organization:
-        required: true
         type: string
+        default: ${{ github.repository_owner }}
       project:
-        required: true
         type: string
+        default: ${{ github.repository }}
       dotnet_version:
-        required: true
         type: string
         default: '8.x'
       unit_test_verbosity:
