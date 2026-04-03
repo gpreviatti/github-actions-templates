@@ -62,22 +62,32 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar-scanner
 
       - name: Install SonarQube Cloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
+          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory -Force
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
 
-      - name: Test and Analyze With SonarQube Cloud
+      - name: Begin SonarQube Cloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{inputs.sonar_inclusions}}"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{ inputs.project }}" /o:"${{ inputs.organization }}" /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{ inputs.sonar_inclusions }}"
+
+      - name: Run unit tests with coverage
+        shell: powershell
+        run: |
           if ("${{ inputs.no_build }}" -eq "true") {
-            dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
+            dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
           } else {
-            dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
+            dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
           }
+
+      - name: End SonarQube Cloud analysis
+        if: ${{ always() }}
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+        shell: powershell
+        run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.scanner.useSonarScannerCLI=true
 
