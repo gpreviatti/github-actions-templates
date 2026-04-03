@@ -113,8 +113,8 @@ Composite validation pipeline:
 - `docker_compose_file_path` (string, required)
 - `dotnet_version` (string, required, default: `8.x`)
 - `unit_test_verbosity` (string, optional, default: `n`)
-- `organization` (string, required)
-- `project` (string, required)
+- `sonar_organization` (string, optional, default: repository owner)
+- `sonar_project` (string, optional, default: repository name)
 - `sonar_host_url` (string, optional, default: `https://sonarcloud.io`)
 
 #### Secrets (`dotnet-validate.yml`)
@@ -169,8 +169,8 @@ jobs:
       application_stryker_config_path: tests/MyProject.UnitTests/stryker-application.json
       integration_test_project_path: tests/MyProject.IntegrationTests/MyProject.IntegrationTests.csproj
       docker_compose_file_path: docker-compose.yml
-      organization: my-sonar-org
-      project: my-sonar-project
+      sonar_organization: my-sonar-org
+      sonar_project: my-sonar-project
       sonar_host_url: https://sonarcloud.io
       stryker_enable: true
       integration_test_enable: true

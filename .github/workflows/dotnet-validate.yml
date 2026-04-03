@@ -32,8 +32,10 @@ on:
         default: 'n'
       sonar_organization:
         type: string
+        default: ${{ github.repository_owner }}
       sonar_project:
         type: string
+        default: ${{ github.repository }}
       sonar_host_url:
         type: string
         default: 'https://sonarcloud.io'
@@ -53,8 +55,8 @@ jobs:
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
     with:
-      organization: ${{ inputs.sonar_organization }}
-      project: ${{ inputs.sonar_project }}
+      organization: ${{ inputs.sonar_organization || github.repository_owner }}
+      project: ${{ inputs.sonar_project || github.repository }}
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
