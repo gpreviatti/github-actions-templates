@@ -9,7 +9,7 @@ on:
         default: ${{ github.repository }}
       dotnet_version:
         type: string
-        default: '8.x'
+        default: '10.x'
       unit_test_verbosity:
         type: string
         default: 'n'
@@ -24,7 +24,7 @@ on:
         default: 'https://sonarcloud.io'
       no_build:
         type: boolean
-        default: false
+        default: true
       build_configuration:
         type: string
         default: 'Release'
@@ -76,14 +76,17 @@ jobs:
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{ inputs.project }}" /o:"${{ inputs.organization }}" /d:sonar.host.url="${{ inputs.sonar_host_url }}" /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{ inputs.sonar_inclusions }}"
 
-      - name: Run unit tests with coverage
+      - name: Run unit tests with build
+        if: ${{ !inputs.no_build }}
         shell: powershell
         run: |
-          if ("${{ inputs.no_build }}" -eq "true") {
-            dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
-          } else {
-            dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
-          }
+          dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
+
+      - name: Run unit tests without build
+        if: ${{ inputs.no_build }}
+        shell: powershell
+        run: |
+          dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
 
       - name: End SonarQube Cloud analysis
         if: ${{ always() }}

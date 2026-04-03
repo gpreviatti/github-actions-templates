@@ -2,23 +2,23 @@
 
 Reusable GitHub Actions workflows for .NET projects.
 
-This repository provides a set of `workflow_call` templates you can reference from other repositories to standardize CI/CD steps like build, tests, mutation tests, Sonar analysis, packaging, and publishing.
+This repository provides `workflow_call` templates that can be referenced from other repositories to standardize CI/CD steps such as build, unit tests, integration tests, mutation tests, SonarQube Cloud analysis, packaging, and publishing.
 
 ---
 
-## Available Templates
+## Available templates
 
 All templates live in `.github/workflows/`.
 
 ### `dotnet-build.yml`
 
-Builds the solution/project.
+Builds a solution/project.
 
-#### Inputs (`dotnet-build.yml`)
+**Inputs**
 
-- `dotnet_version` (string, required, default: `8.x`)
-- `build_mode` (string, optional, default: `Release`)
-- `build_path` (string, optional, default: `.`)
+- `dotnet_version` (string, default: `10.x`)
+- `build_mode` (string, default: `Release`)
+- `build_path` (string, default: `.`)
 
 ---
 
@@ -26,33 +26,34 @@ Builds the solution/project.
 
 Runs unit tests.
 
-#### Inputs (`dotnet-unit-test.yml`)
+**Inputs**
 
 - `test_project_path` (string, required)
-- `dotnet_version` (string, required, default: `8.x`)
-- `no_build` (boolean, optional, default: `false`)
-- `build_configuration` (string, optional, default: `Release`)
-- `name` (string, optional, default: `Unit Tests`)
+- `dotnet_version` (string, default: `10.x`)
+- `no_build` (boolean, default: `true`)
+- `build_configuration` (string, default: `Release`)
+- `verbosity` (string, default: `n`)
+- `name` (string, default: `Unit Tests`)
 
 ---
 
 ### `dotnet-unit-test-with-sonar-scanner.yml`
 
-Runs unit tests with SonarQube Cloud analysis (Windows runner + JDK 17 + dotnet-sonarscanner).
+Runs unit tests with SonarQube Cloud analysis (Windows runner + JDK 17 + `dotnet-sonarscanner`).
 
-#### Inputs (`dotnet-unit-test-with-sonar-scanner.yml`)
+**Inputs**
 
-- `organization` (string, optional, default: repository owner)
-- `project` (string, optional, default: repository name)
-- `dotnet_version` (string, optional, default: `8.x`)
-- `unit_test_verbosity` (string, optional, default: `n`)
+- `organization` (string, default: repository owner)
+- `project` (string, default: repository name)
+- `dotnet_version` (string, default: `10.x`)
+- `unit_test_verbosity` (string, default: `n`)
 - `unit_test_project_path` (string, required)
-- `sonar_inclusions` (string, optional, default: `**src/Application**,**src/Domain**`)
-- `sonar_host_url` (string, optional, default: `https://sonarcloud.io`)
-- `no_build` (boolean, optional, default: `false`)
-- `build_configuration` (string, optional, default: `Release`)
+- `sonar_inclusions` (string, default: `**src/Application**,**src/Domain**`)
+- `sonar_host_url` (string, default: `https://sonarcloud.io`)
+- `no_build` (boolean, default: `true`)
+- `build_configuration` (string, default: `Release`)
 
-#### Secrets (`dotnet-unit-test-with-sonar-scanner.yml`)
+**Secrets**
 
 - `sonar_token` (required)
 
@@ -62,12 +63,14 @@ Runs unit tests with SonarQube Cloud analysis (Windows runner + JDK 17 + dotnet-
 
 Starts Docker Compose and runs integration tests.
 
-#### Inputs (`dotnet-integration-test.yml`)
+**Inputs**
 
 - `docker_compose_file_path` (string, required)
 - `test_project_path` (string, required)
-- `dotnet_version` (string, required, default: `8.x`)
-- `build_configuration` (string, optional, default: `Release`)
+- `dotnet_version` (string, default: `10.x`)
+- `build_configuration` (string, default: `Release`)
+- `verbosity` (string, default: `n`)
+- `no_build` (boolean, default: `true`)
 
 ---
 
@@ -75,91 +78,126 @@ Starts Docker Compose and runs integration tests.
 
 Runs mutation tests using Stryker.
 
-#### Inputs (`dotnet-mutation-test.yml`)
+**Inputs**
 
 - `test_project_path` (string, required)
 - `stryker_config_path` (string, required)
-- `dotnet_version` (string, required, default: `8.x`)
-- `log_level` (string, optional, default: `info`)
-- `name` (string, optional, default: `Mutation Tests`)
+- `dotnet_version` (string, default: `10.x`)
+- `log_level` (string, default: `info`)
+- `name` (string, default: `Mutation Tests`)
 
 ---
 
 ### `dotnet-pack.yml`
 
-Builds, packs, and pushes NuGet package.
+Builds, packs, and pushes a NuGet package.
 
-#### Inputs (`dotnet-pack.yml`)
+**Inputs**
 
 - `package_version` (string, required)
-- `dotnet_version` (string, required, default: `8.x`)
+- `dotnet_version` (string, default: `10.x`)
 
-#### Secrets (`dotnet-pack.yml`)
+**Secrets**
 
 - `nuget_api_key` (required)
-
----
-
-### `dotnet-validate.yml`
-
-Composite validation pipeline:
-
-- build
-- unit tests + Sonar
-- optional mutation tests (domain/application) — enabled via `stryker_enable`; skipped if `unit_test_project_path` is empty
-- optional integration tests — skipped if `integration_test_project_path` is empty
-
-#### Inputs (`dotnet-validate.yml`)
-
-- `build_path` (string, optional, default: `.`)
-- `stryker_enable` (boolean, optional, default: `true`)
-- `test_no_build` (boolean, optional, default: `true`)
-- `unit_test_project_path` (string, optional)
-- `domain_stryker_config_path` (string, optional)
-- `application_stryker_config_path` (string, optional)
-- `stryker_log_level` (string, optional, default: `info`)
-- `integration_test_project_path` (string, optional)
-- `docker_compose_file_path` (string, optional)
-- `dotnet_version` (string, required, default: `8.x`)
-- `unit_test_verbosity` (string, optional, default: `n`)
-- `sonar_organization` (string, optional, default: repository owner)
-- `sonar_project` (string, optional, default: repository name)
-- `sonar_host_url` (string, optional, default: `https://sonarcloud.io`)
-
-#### Secrets (`dotnet-validate.yml`)
-
-- `sonar_token` (required)
 
 ---
 
 ### `dotnet-publish.yml`
 
-Builds and publishes NuGet package.
+Composes build + pack/publish by reusing `dotnet-build.yml` and `dotnet-pack.yml`.
 
-This workflow is intentionally minimal and currently includes:
+**Inputs**
 
-- build
-- NuGet pack + publish
-
-#### Inputs (`dotnet-publish.yml`)
-
-- `build_path` (string, optional, default: `.`)
-- `dotnet_version` (string, required, default: `8.x`)
+- `build_path` (string, default: `.`)
+- `dotnet_version` (string, default: `10.x`)
 - `package_version` (string, required)
 
-#### Secrets (`dotnet-publish.yml`)
+**Secrets**
 
 - `nuget_api_key` (required)
 
 ---
 
-## How to Use from Another Repository
+### `dotnet-validate-bff.yml`
+
+Validation pipeline for BFF-style services:
+
+- build
+- optional integration tests
+
+**Inputs**
+
+- `build_path` (string, default: `.`)
+- `dotnet_version` (string, default: `10.x`)
+- `test_no_build` (boolean, default: `true`)
+- `integration_test_project_path` (string, optional)
+- `docker_compose_file_path` (string, optional)
+- `test_verbosity` (string, default: `n`)
+
+---
+
+### `dotnet-validate-contracts.yml`
+
+Validation pipeline for contracts-focused repositories:
+
+- build
+- unit tests
+- optional mutation tests
+
+**Inputs**
+
+- `build_path` (string, default: `.`)
+- `dotnet_version` (string, default: `10.x`)
+- `stryker_enable` (boolean, default: `true`)
+- `stryker_config_path` (string, optional)
+- `stryker_log_level` (string, default: `info`)
+- `test_no_build` (boolean, default: `true`)
+- `test_project_path` (string, optional)
+- `test_verbosity` (string, default: `n`)
+
+---
+
+### `dotnet-validate-full.yml`
+
+Full validation pipeline:
+
+- build
+- optional unit tests with SonarQube Cloud
+- optional domain/application mutation tests
+- optional integration tests
+
+**Inputs**
+
+- `build_path` (string, default: `.`)
+- `dotnet_version` (string, default: `10.x`)
+- `stryker_enable` (boolean, default: `true`)
+- `test_no_build` (boolean, default: `true`)
+- `unit_test_project_path` (string, optional)
+- `domain_stryker_config_path` (string, optional)
+- `application_stryker_config_path` (string, optional)
+- `stryker_log_level` (string, default: `info`)
+- `integration_test_project_path` (string, optional)
+- `docker_compose_file_path` (string, optional)
+- `unit_test_verbosity` (string, default: `n`)
+- `sonar_organization` (string, default: repository owner)
+- `sonar_validation` (boolean, default: `true`)
+- `sonar_project` (string, default: repository name)
+- `sonar_host_url` (string, default: `https://sonarcloud.io`)
+
+**Secrets**
+
+- `sonar_token` (optional unless Sonar validation is enabled and unit tests are executed)
+
+---
+
+## How to use from another repository
 
 In your consuming repository, create a workflow that calls one of these templates.
 
 > Replace `<owner>`, `<repo>`, and `<ref>` (branch/tag/SHA) with your values.
 
-### Example: Validate pipeline
+### Example: Full validation
 
 ```yaml
 name: Validate
@@ -171,9 +209,9 @@ on:
 
 jobs:
   validate:
-    uses: <owner>/<repo>/.github/workflows/dotnet-validate.yml@<ref>
+    uses: <owner>/<repo>/.github/workflows/dotnet-validate-full.yml@<ref>
     with:
-      dotnet_version: '8.x'
+      dotnet_version: '10.x'
       build_path: '.'
       unit_test_project_path: tests/MyProject.UnitTests/MyProject.UnitTests.csproj
       domain_stryker_config_path: tests/MyProject.UnitTests/stryker-domain.json
@@ -183,6 +221,7 @@ jobs:
       sonar_organization: my-sonar-org
       sonar_project: my-sonar-project
       sonar_host_url: https://sonarcloud.io
+      sonar_validation: true
       stryker_enable: true
       stryker_log_level: info
       unit_test_verbosity: n
@@ -191,7 +230,27 @@ jobs:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 ```
 
-### Example: Publish pipeline
+### Example: BFF validation
+
+```yaml
+name: Validate BFF
+
+on:
+  pull_request:
+
+jobs:
+  validate:
+    uses: <owner>/<repo>/.github/workflows/dotnet-validate-bff.yml@<ref>
+    with:
+      dotnet_version: '10.x'
+      build_path: '.'
+      integration_test_project_path: tests/MyProject.IntegrationTests/MyProject.IntegrationTests.csproj
+      docker_compose_file_path: docker-compose.yml
+      test_no_build: true
+      test_verbosity: n
+```
+
+### Example: Publish package
 
 ```yaml
 name: Publish
@@ -203,7 +262,7 @@ jobs:
   publish:
     uses: <owner>/<repo>/.github/workflows/dotnet-publish.yml@<ref>
     with:
-      dotnet_version: '8.x'
+      dotnet_version: '10.x'
       build_path: '.'
       package_version: 1.2.3
     secrets:
@@ -212,21 +271,21 @@ jobs:
 
 ---
 
-## Required Secrets in Caller Repository
+## Required secrets in caller repository
 
-Depending on the template used, configure:
+Depending on the template used, configure and map:
 
-- `SONAR_TOKEN`
-- `NUGET_API_KEY`
+- `SONAR_TOKEN` → `sonar_token`
+- `NUGET_API_KEY` → `nuget_api_key`
 
-(Names in your repository secrets can differ, but must be mapped in the `secrets:` block of the calling workflow.)
+(Secret names in your repository can differ, as long as they are mapped in the `secrets:` block of the calling workflow.)
 
 ---
 
 ## Notes
 
-- `dotnet-unit-test-with-sonar-scanner.yml` runs on `windows-latest`; others mostly run on `ubuntu-latest`.
+- `dotnet-unit-test-with-sonar-scanner.yml` runs on `windows-latest`; most other templates run on `ubuntu-latest`.
+- Validation templates default to `.NET 10.x`, while base build/test/pack templates default to `.NET 10.x`.
 - Pin reusable workflow references to a tag or commit SHA for safer, reproducible pipelines.
-- Use `dotnet-validate.yml` for quality gates. Use `dotnet-publish.yml` when you only need build + package publish.
 
 Happy automating 🚀

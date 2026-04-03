@@ -4,7 +4,7 @@ on:
       dotnet_version:
         required: true
         type: string
-        default: '8.x'
+        default: '10.x'
       build_mode:
         type: string
         default: 'Release'

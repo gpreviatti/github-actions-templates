@@ -4,6 +4,10 @@ on:
       build_path:
         type: string
         default: '.'
+      dotnet_version:
+        required: true
+        type: string
+        default: '10.x'
       stryker_enable:
         type: boolean
         default: true
@@ -23,16 +27,15 @@ on:
         type: string
       docker_compose_file_path:
         type: string
-      dotnet_version:
-        required: true
-        type: string
-        default: '8.x'
       unit_test_verbosity:
         type: string
         default: 'n'
       sonar_organization:
         type: string
         default: ${{ github.repository_owner }}
+      sonar_validation:
+        type: boolean
+        default: true
       sonar_project:
         type: string
         default: ${{ github.repository }}
@@ -51,7 +54,7 @@ jobs:
       build_path: ${{ inputs.build_path }}
 
   unit-tests-with-sonar-scanner:
-    if: ${{ inputs.unit_test_project_path != '' }}
+    if: ${{ inputs.unit_test_project_path != '' && inputs.sonar_validation }}
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
     with:
@@ -67,7 +70,7 @@ jobs:
       sonar_token: ${{ secrets.sonar_token }}
 
   mutation-tests-domain:
-    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable }}
+    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.domain_stryker_config_path != '' }}
     needs: build
     uses: ./.github/workflows/dotnet-mutation-test.yml
     with:
@@ -78,7 +81,7 @@ jobs:
       name: 'Domain Mutation Tests'
 
   mutation-tests-application:
-    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable }}
+    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.application_stryker_config_path != '' }}
     needs: build
     uses: ./.github/workflows/dotnet-mutation-test.yml
     with:

@@ -10,10 +10,16 @@ on:
       dotnet_version:
         required: true
         type: string
-        default: '8.x'
+        default: '10.x'
       build_configuration:
         type: string
         default: 'Release'
+      verbosity:
+        type: string
+        default: 'n'
+      no_build:
+        type: boolean
+        default: true
 
 jobs:
   integration-test:
@@ -28,6 +34,12 @@ jobs:
     - name: Start Docker Compose
       run: docker compose -f ${{ inputs.docker_compose_file_path }} up -d && sleep 10
 
-    - name: Test
+    - name: Test With Build
+      if: ${{ !inputs.no_build }}
       run: |
-        dotnet test ${{ inputs.test_project_path }} -c ${{ inputs.build_configuration }}
+        dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} --no-build -c ${{ inputs.build_configuration }}
+
+    - name: Test Without Build
+      if: ${{ inputs.no_build }}
+      run: |
+        dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} -c ${{ inputs.build_configuration }}
