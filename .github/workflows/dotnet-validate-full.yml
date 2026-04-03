@@ -4,6 +4,10 @@ on:
       build_path:
         type: string
         default: '.'
+      dotnet_version:
+        required: true
+        type: string
+        default: '10.x'
       stryker_enable:
         type: boolean
         default: true
@@ -11,8 +15,6 @@ on:
         type: boolean
         default: true
       unit_test_project_path:
-        type: string
-      default_stryker_config_path:
         type: string
       domain_stryker_config_path:
         type: string
@@ -25,10 +27,6 @@ on:
         type: string
       docker_compose_file_path:
         type: string
-      dotnet_version:
-        required: true
-        type: string
-        default: '8.x'
       unit_test_verbosity:
         type: string
         default: 'n'
@@ -70,28 +68,6 @@ jobs:
       build_configuration: 'Release'
     secrets:
       sonar_token: ${{ secrets.sonar_token }}
-
-  unit-tests:
-    if: ${{ inputs.unit_test_project_path != '' && !inputs.sonar_validation }}
-    uses: ./.github/workflows/dotnet-unit-test.yml
-    needs: build
-    with:
-      test_project_path: ${{ inputs.unit_test_project_path }}
-      dotnet_version: ${{ inputs.dotnet_version }}
-      verbosity: ${{ inputs.unit_test_verbosity }}
-      no_build: ${{ inputs.test_no_build }}
-      build_configuration: 'Release'
-
-  mutation-tests-default:
-    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.default_stryker_config_path != '' }}
-    needs: build
-    uses: ./.github/workflows/dotnet-mutation-test.yml
-    with:
-      test_project_path: ${{ inputs.unit_test_project_path }}
-      stryker_config_path: ${{ inputs.default_stryker_config_path }}
-      dotnet_version: ${{ inputs.dotnet_version }}
-      log_level: ${{ inputs.stryker_log_level }}
-      name: 'Mutation Tests'
 
   mutation-tests-domain:
     if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.domain_stryker_config_path != '' }}
