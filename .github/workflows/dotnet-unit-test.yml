@@ -32,11 +32,11 @@ jobs:
           dotnet-version: ${{ inputs.dotnet_version }}
 
       - name: Test With Build
-        if: ${{ inputs.no_build -ne 'true' }}
+        if: ${{ !inputs.no_build }}
         run: |
           dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} --no-build -c ${{ inputs.build_configuration }}
 
       - name: Test Without Build
-        if: ${{ inputs.no_build -eq 'true' }}
+        if: ${{ inputs.no_build }}
         run: |
           dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} -c ${{ inputs.build_configuration }}
