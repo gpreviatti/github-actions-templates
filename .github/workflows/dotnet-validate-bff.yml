@@ -1,0 +1,41 @@
+on:
+  workflow_call:
+    inputs:
+      build_path:
+        type: string
+        default: '.'
+      dotnet_version:
+        required: true
+        type: string
+        default: '10.x'
+      test_no_build:
+        type: boolean
+        default: true
+      integration_test_project_path:
+        type: string
+      docker_compose_file_path:
+        type: string
+      test_verbosity:
+        type: string
+        default: 'n'
+
+jobs:
+  build:
+    uses: ./.github/workflows/dotnet-build.yml
+    with:
+      dotnet_version: ${{ inputs.dotnet_version }}
+      build_mode: 'Release'
+      build_path: ${{ inputs.build_path }}
+
+  integration-test:
+    if: ${{ inputs.integration_test_project_path != '' }}
+    uses: ./.github/workflows/dotnet-integration-test.yml
+    needs: build
+    with:
+      docker_compose_file_path: ${{ inputs.docker_compose_file_path }}
+      test_project_path: ${{ inputs.integration_test_project_path }}
+      dotnet_version: ${{ inputs.dotnet_version }}
+      build_configuration: 'Release'
+      verbosity: ${{ inputs.test_verbosity }}
+      no_build: ${{ inputs.test_no_build }}
+

@@ -1,0 +1,55 @@
+on:
+  workflow_call:
+    inputs:
+      build_path:
+        type: string
+        default: '.'
+      dotnet_version:
+        required: true
+        type: string
+        default: '10.x'
+      stryker_enable:
+        type: boolean
+        default: true
+      stryker_config_path:
+        type: string
+      stryker_log_level:
+        type: string
+        default: 'info'
+      test_no_build:
+        type: boolean
+        default: true
+      test_project_path:
+        type: string
+      test_verbosity:
+        type: string
+        default: 'n'
+jobs:
+  build:
+    uses: ./.github/workflows/dotnet-build.yml
+    with:
+      dotnet_version: ${{ inputs.dotnet_version }}
+      build_mode: 'Release'
+      build_path: ${{ inputs.build_path }}
+
+  unit-tests:
+    uses: ./.github/workflows/dotnet-unit-test.yml
+    needs: build
+    with:
+      test_project_path: ${{ inputs.test_project_path }}
+      dotnet_version: ${{ inputs.dotnet_version }}
+      verbosity: ${{ inputs.test_verbosity }}
+      no_build: ${{ inputs.test_no_build }}
+      build_configuration: 'Release'
+
+  mutation-tests:
+    if: ${{ inputs.stryker_enable && inputs.stryker_config_path != '' }}
+    needs: build
+    uses: ./.github/workflows/dotnet-mutation-test.yml
+    with:
+      name: 'Mutation Tests'
+      test_project_path: ${{ inputs.test_project_path }}
+      stryker_config_path: ${{ inputs.stryker_config_path }}
+      dotnet_version: ${{ inputs.dotnet_version }}
+      log_level: ${{ inputs.stryker_log_level }}
+
