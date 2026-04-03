@@ -35,6 +35,9 @@ on:
       project:
         required: true
         type: string
+      sonar_host_url:
+        type: string
+        default: 'https://sonarcloud.io'
     secrets:
       sonar_token:
 
@@ -56,6 +59,7 @@ jobs:
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
+      sonar_host_url: ${{ inputs.sonar_host_url }}
       no_build: ${{ inputs.test_no_build }}
       build_configuration: 'Release'
     secrets:

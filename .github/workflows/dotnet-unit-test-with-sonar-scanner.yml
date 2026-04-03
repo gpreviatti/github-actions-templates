@@ -20,6 +20,9 @@ on:
       sonar_inclusions:
         type: string
         default: '**src/Application**,**src/Domain**'
+      sonar_host_url:
+        type: string
+        default: 'https://sonarcloud.io'
       no_build:
         type: boolean
         default: false
@@ -72,7 +75,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{ inputs.project }}" /o:"${{ inputs.organization }}" /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{ inputs.sonar_inclusions }}"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{ inputs.project }}" /o:"${{ inputs.organization }}" /d:sonar.host.url="${{ inputs.sonar_host_url }}" /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{ inputs.sonar_inclusions }}"
 
       - name: Run unit tests with coverage
         shell: powershell

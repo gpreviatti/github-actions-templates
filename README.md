@@ -44,6 +44,7 @@ Runs unit tests with SonarQube Cloud analysis (Windows runner + JDK 17 + dotnet-
 - `unit_test_verbosity` (string, optional, default: `n`)
 - `unit_test_project_path` (string, required)
 - `sonar_inclusions` (string, optional, default: `**src/Application**,**src/Domain**`)
+- `sonar_host_url` (string, optional, default: `https://sonarcloud.io`)
 
 #### Secrets (`dotnet-unit-test-with-sonar-scanner.yml`)
 
@@ -114,6 +115,7 @@ Composite validation pipeline:
 - `unit_test_verbosity` (string, optional, default: `n`)
 - `organization` (string, required)
 - `project` (string, required)
+- `sonar_host_url` (string, optional, default: `https://sonarcloud.io`)
 
 #### Secrets (`dotnet-validate.yml`)
 
@@ -169,6 +171,7 @@ jobs:
       docker_compose_file_path: docker-compose.yml
       organization: my-sonar-org
       project: my-sonar-project
+      sonar_host_url: https://sonarcloud.io
       stryker_enable: true
       integration_test_enable: true
       stryker_log_level: info
