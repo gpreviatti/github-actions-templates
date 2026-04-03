@@ -31,9 +31,10 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
 
-      - name: Build
-        if: ${{ !inputs.no_build }}
-        run: dotnet build ${{ inputs.test_project_path }} -c ${{ inputs.build_configuration }}
-
       - name: Test
-        run: dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} -c ${{ inputs.build_configuration }}
+        run: |
+          if [ "${{ inputs.no_build }}" = "true" ]; then
+            dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} --no-build -c ${{ inputs.build_configuration }}
+          else
+            dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} -c ${{ inputs.build_configuration }}
+          fi
