@@ -10,7 +10,7 @@ on:
         default: '8.x'
       no_build:
         type: boolean
-        default: false
+        default: true
       build_configuration:
         type: string
         default: 'Release'
