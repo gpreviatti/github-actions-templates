@@ -18,6 +18,7 @@ Builds the solution/project.
 
 - `dotnet_version` (string, required, default: `8.x`)
 - `build_mode` (string, optional, default: `Release`)
+- `build_path` (string, optional, default: `.`)
 
 ---
 
@@ -29,6 +30,9 @@ Runs unit tests.
 
 - `test_project_path` (string, required)
 - `dotnet_version` (string, required, default: `8.x`)
+- `no_build` (boolean, optional, default: `false`)
+- `build_configuration` (string, optional, default: `Release`)
+- `name` (string, optional, default: `Unit Tests`)
 
 ---
 
@@ -38,13 +42,15 @@ Runs unit tests with SonarQube Cloud analysis (Windows runner + JDK 17 + dotnet-
 
 #### Inputs (`dotnet-unit-test-with-sonar-scanner.yml`)
 
-- `organization` (string, required)
-- `project` (string, required)
-- `dotnet_version` (string, required, default: `8.x`)
+- `organization` (string, optional, default: repository owner)
+- `project` (string, optional, default: repository name)
+- `dotnet_version` (string, optional, default: `8.x`)
 - `unit_test_verbosity` (string, optional, default: `n`)
 - `unit_test_project_path` (string, required)
 - `sonar_inclusions` (string, optional, default: `**src/Application**,**src/Domain**`)
 - `sonar_host_url` (string, optional, default: `https://sonarcloud.io`)
+- `no_build` (boolean, optional, default: `false`)
+- `build_configuration` (string, optional, default: `Release`)
 
 #### Secrets (`dotnet-unit-test-with-sonar-scanner.yml`)
 
@@ -61,6 +67,7 @@ Starts Docker Compose and runs integration tests.
 - `docker_compose_file_path` (string, required)
 - `test_project_path` (string, required)
 - `dotnet_version` (string, required, default: `8.x`)
+- `build_configuration` (string, optional, default: `Release`)
 
 ---
 
@@ -74,6 +81,7 @@ Runs mutation tests using Stryker.
 - `stryker_config_path` (string, required)
 - `dotnet_version` (string, required, default: `8.x`)
 - `log_level` (string, optional, default: `info`)
+- `name` (string, optional, default: `Mutation Tests`)
 
 ---
 
@@ -98,19 +106,20 @@ Composite validation pipeline:
 
 - build
 - unit tests + Sonar
-- optional mutation tests (domain/application)
-- optional integration tests
+- optional mutation tests (domain/application) — enabled via `stryker_enable`; skipped if `unit_test_project_path` is empty
+- optional integration tests — skipped if `integration_test_project_path` is empty
 
 #### Inputs (`dotnet-validate.yml`)
 
+- `build_path` (string, optional, default: `.`)
 - `stryker_enable` (boolean, optional, default: `true`)
-- `integration_test_enable` (boolean, optional, default: `true`)
-- `unit_test_project_path` (string, required)
-- `domain_stryker_config_path` (string, required)
-- `application_stryker_config_path` (string, required)
+- `test_no_build` (boolean, optional, default: `true`)
+- `unit_test_project_path` (string, optional)
+- `domain_stryker_config_path` (string, optional)
+- `application_stryker_config_path` (string, optional)
 - `stryker_log_level` (string, optional, default: `info`)
-- `integration_test_project_path` (string, required)
-- `docker_compose_file_path` (string, required)
+- `integration_test_project_path` (string, optional)
+- `docker_compose_file_path` (string, optional)
 - `dotnet_version` (string, required, default: `8.x`)
 - `unit_test_verbosity` (string, optional, default: `n`)
 - `sonar_organization` (string, optional, default: repository owner)
@@ -134,6 +143,7 @@ This workflow is intentionally minimal and currently includes:
 
 #### Inputs (`dotnet-publish.yml`)
 
+- `build_path` (string, optional, default: `.`)
 - `dotnet_version` (string, required, default: `8.x`)
 - `package_version` (string, required)
 
@@ -164,6 +174,7 @@ jobs:
     uses: <owner>/<repo>/.github/workflows/dotnet-validate.yml@<ref>
     with:
       dotnet_version: '8.x'
+      build_path: '.'
       unit_test_project_path: tests/MyProject.UnitTests/MyProject.UnitTests.csproj
       domain_stryker_config_path: tests/MyProject.UnitTests/stryker-domain.json
       application_stryker_config_path: tests/MyProject.UnitTests/stryker-application.json
@@ -173,9 +184,9 @@ jobs:
       sonar_project: my-sonar-project
       sonar_host_url: https://sonarcloud.io
       stryker_enable: true
-      integration_test_enable: true
       stryker_log_level: info
       unit_test_verbosity: n
+      test_no_build: true
     secrets:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 ```
@@ -193,6 +204,7 @@ jobs:
     uses: <owner>/<repo>/.github/workflows/dotnet-publish.yml@<ref>
     with:
       dotnet_version: '8.x'
+      build_path: '.'
       package_version: 1.2.3
     secrets:
       nuget_api_key: ${{ secrets.NUGET_API_KEY }}
