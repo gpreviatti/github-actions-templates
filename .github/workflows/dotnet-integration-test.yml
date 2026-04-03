@@ -17,6 +17,7 @@ on:
 
 jobs:
   integration-test:
+    name: Integration Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

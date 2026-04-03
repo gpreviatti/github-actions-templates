@@ -14,9 +14,13 @@ on:
       log_level:
         type: string
         default: 'info'
+      name:
+        type: string
+        default: 'Mutation Tests'
 
 jobs:
   mutation-tests:
+    name: ${{ inputs.name }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

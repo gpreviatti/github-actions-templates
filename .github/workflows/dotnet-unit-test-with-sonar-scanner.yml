@@ -32,6 +32,7 @@ on:
 
 jobs:
   unit-tests-with-sonar-scanner:
+    name: Unit Tests with SonarQube Cloud Scanner
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

@@ -70,6 +70,7 @@ jobs:
       stryker_config_path: ${{ inputs.domain_stryker_config_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
+      name: 'Domain Mutation Tests'
 
   mutation-tests-application:
     if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable }}
@@ -80,6 +81,7 @@ jobs:
       stryker_config_path: ${{ inputs.application_stryker_config_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
+      name: 'Application Mutation Tests'
 
   integration-test:
     if: ${{ inputs.integration_test_project_path != '' }}
