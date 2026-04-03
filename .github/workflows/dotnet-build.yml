@@ -6,18 +6,21 @@ on:
         type: string
         default: '8.x'
       build_mode:
-        required: false
         type: string
         default: 'Release'
+      build_path:
+        type: string
+        default: '.'
 
 jobs:
   build:
+    name: .NET Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ inputs.dotnet_version }}
 
     - name: Build
-      run: dotnet build -c ${{ inputs.build_mode }}
+      run: dotnet build ${{ inputs.build_path }} -c ${{ inputs.build_mode }}

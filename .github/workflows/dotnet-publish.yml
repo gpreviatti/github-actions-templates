@@ -1,53 +1,17 @@
 on:
   workflow_call:
     inputs:
-      stryker_enable:
-        required: false
-        type: boolean
-        default: true
-      integration_test_enable:
-        required: false
-        type: boolean
-        default: true
-      unit_test_project_path:
-        required: true
+      build_path:
         type: string
-      domain_stryker_config_path:
-        required: true
-        type: string
-      application_stryker_config_path:
-        required: true
-        type: string
-      stryker_log_level:
-        required: false
-        type: string
-        default: 'info'
-      integration_test_project_path:
-        required: true
-        type: string
-      docker_compose_file_path:
-        required: true
-        type: string
+        default: '.'
       dotnet_version:
         required: true
         type: string
         default: '8.x'
-      unit_test_verbosity:
-        required: false
-        type: string
-        default: 'n'
-      organization:
-        required: true
-        type: string
-      project:
-        required: true
-        type: string
       package_version:
         required: true
         type: string
     secrets:
-      sonar_token:
-        required: true
       nuget_api_key:
         required: true
 
@@ -57,50 +21,10 @@ jobs:
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
       build_mode: 'Debug'
-
-  unit-tests-with-sonar-scanner:
-    uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
-    needs: build
-    with:
-      organization: ${{ inputs.organization }}
-      project: ${{ inputs.project }}
-      dotnet_version: ${{ inputs.dotnet_version }}
-      unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
-      unit_test_project_path: ${{ inputs.unit_test_project_path }}
-    secrets:
-      sonar_token: ${{ secrets.sonar_token }}
-
-  mutation-tests-domain:
-    needs: build
-    uses: ./.github/workflows/dotnet-mutation-test.yml
-    if: ${{ inputs.stryker_enable }}
-    with:
-      test_project_path: ${{ inputs.unit_test_project_path }}
-      stryker_config_path: ${{ inputs.domain_stryker_config_path }}
-      dotnet_version: ${{ inputs.dotnet_version }}
-      log_level: ${{ inputs.stryker_log_level }}
-
-  mutation-tests-application:
-    needs: build
-    uses: ./.github/workflows/dotnet-mutation-test.yml
-    if: ${{ inputs.stryker_enable }}
-    with:
-      test_project_path: ${{ inputs.unit_test_project_path }}
-      stryker_config_path: ${{ inputs.application_stryker_config_path }}
-      dotnet_version: ${{ inputs.dotnet_version }}
-      log_level: ${{ inputs.stryker_log_level }}
-
-  integration-test:
-    uses: ./.github/workflows/dotnet-integration-test.yml
-    if: ${{ inputs.integration_test_enable }}
-    needs: build
-    with:
-      docker_compose_file_path: ${{ inputs.docker_compose_file_path }}
-      test_project_path: ${{ inputs.integration_test_project_path }}
-      dotnet_version: ${{ inputs.dotnet_version }}
+      build_path: ${{ inputs.build_path }}
 
   pack:
-    needs: [unit-tests-with-sonar-scanner, integration-test]
+    needs: build
     uses: ./.github/workflows/dotnet-pack.yml
     with:
       dotnet_version: ${{ inputs.dotnet_version }}

@@ -1,96 +1,100 @@
 on:
   workflow_call:
     inputs:
+      build_path:
+        type: string
+        default: '.'
       stryker_enable:
-        required: false
         type: boolean
         default: true
-      integration_test_enable:
-        required: false
+      test_no_build:
         type: boolean
         default: true
       unit_test_project_path:
-        required: true
         type: string
       domain_stryker_config_path:
-        required: true
         type: string
       application_stryker_config_path:
-        required: true
         type: string
       stryker_log_level:
-        required: false
         type: string
         default: 'info'
       integration_test_project_path:
-        required: true
         type: string
       docker_compose_file_path:
-        required: true
         type: string
       dotnet_version:
         required: true
         type: string
         default: '8.x'
       unit_test_verbosity:
-        required: false
         type: string
         default: 'n'
-      organization:
-        required: true
+      sonar_organization:
         type: string
-      project:
-        required: true
+        default: ${{ github.repository_owner }}
+      sonar_project:
         type: string
+        default: ${{ github.repository }}
+      sonar_host_url:
+        type: string
+        default: 'https://sonarcloud.io'
     secrets:
       sonar_token:
-        required: true
 
 jobs:
   build:
     uses: ./.github/workflows/dotnet-build.yml
     with:
       dotnet_version: ${{ inputs.dotnet_version }}
-      build_mode: 'Debug'
+      build_mode: 'Release'
+      build_path: ${{ inputs.build_path }}
 
   unit-tests-with-sonar-scanner:
+    if: ${{ inputs.unit_test_project_path != '' }}
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
     with:
-      organization: ${{ inputs.organization }}
-      project: ${{ inputs.project }}
+      organization: ${{ inputs.sonar_organization || github.repository_owner }}
+      project: ${{ inputs.sonar_project || github.repository }}
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
+      sonar_host_url: ${{ inputs.sonar_host_url }}
+      no_build: ${{ inputs.test_no_build }}
+      build_configuration: 'Release'
     secrets:
       sonar_token: ${{ secrets.sonar_token }}
 
   mutation-tests-domain:
+    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable }}
     needs: build
     uses: ./.github/workflows/dotnet-mutation-test.yml
-    if: ${{ inputs.stryker_enable }}
     with:
       test_project_path: ${{ inputs.unit_test_project_path }}
       stryker_config_path: ${{ inputs.domain_stryker_config_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
+      name: 'Domain Mutation Tests'
 
   mutation-tests-application:
+    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable }}
     needs: build
     uses: ./.github/workflows/dotnet-mutation-test.yml
-    if: ${{ inputs.stryker_enable }}
     with:
       test_project_path: ${{ inputs.unit_test_project_path }}
       stryker_config_path: ${{ inputs.application_stryker_config_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
+      name: 'Application Mutation Tests'
 
   integration-test:
+    if: ${{ inputs.integration_test_project_path != '' }}
     uses: ./.github/workflows/dotnet-integration-test.yml
-    if: ${{ inputs.integration_test_enable }}
     needs: build
     with:
       docker_compose_file_path: ${{ inputs.docker_compose_file_path }}
       test_project_path: ${{ inputs.integration_test_project_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
+      build_configuration: 'Release'
 

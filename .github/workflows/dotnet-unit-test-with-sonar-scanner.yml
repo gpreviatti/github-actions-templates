@@ -2,32 +2,39 @@ on:
   workflow_call:
     inputs:
       organization:
-        required: true
         type: string
+        default: ${{ github.repository_owner }}
       project:
-        required: true
         type: string
+        default: ${{ github.repository }}
       dotnet_version:
-        required: true
         type: string
         default: '8.x'
       unit_test_verbosity:
-        required: false
         type: string
         default: 'n'
       unit_test_project_path:
         required: true
         type: string
       sonar_inclusions:
-        required: false
         type: string
         default: '**src/Application**,**src/Domain**'
+      sonar_host_url:
+        type: string
+        default: 'https://sonarcloud.io'
+      no_build:
+        type: boolean
+        default: false
+      build_configuration:
+        type: string
+        default: 'Release'
     secrets:
       sonar_token:
         required: true
 
 jobs:
   unit-tests-with-sonar-scanner:
+    name: Unit Tests with SonarQube Cloud Scanner
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,18 +64,32 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar-scanner
 
       - name: Install SonarQube Cloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
+          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory -Force
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
 
-      - name: Test and Analyze With SonarQube Cloud
+      - name: Begin SonarQube Cloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{inputs.project}}" /o:"${{inputs.organization}}" /d:sonar.token="${{ secrets.sonar_token }}" /v:${{inputs.dotnet_version}} /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{inputs.sonar_inclusions}}"
-          dotnet test ${{ inputs.unit_test_project_path }} -v ${{inputs.unit_test_verbosity}} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"${{ inputs.project }}" /o:"${{ inputs.organization }}" /d:sonar.host.url="${{ inputs.sonar_host_url }}" /d:sonar.token="${{ secrets.sonar_token }}" /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.opencover.reportsPaths="**coverage.opencover.xml" /d:sonar.inclusions="${{ inputs.sonar_inclusions }}"
+
+      - name: Run unit tests with coverage
+        shell: powershell
+        run: |
+          if ("${{ inputs.no_build }}" -eq "true") {
+            dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover --no-build -c ${{ inputs.build_configuration }}
+          } else {
+            dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
+          }
+
+      - name: End SonarQube Cloud analysis
+        if: ${{ always() }}
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+        shell: powershell
+        run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
 

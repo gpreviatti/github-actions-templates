@@ -8,9 +8,19 @@ on:
         required: true
         type: string
         default: '8.x'
+      no_build:
+        type: boolean
+        default: false
+      build_configuration:
+        type: string
+        default: 'Release'
+      name:
+        type: string
+        default: 'Unit Tests'
 
 jobs:
   unit-tests:
+    name: ${{ inputs.name }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,4 +29,9 @@ jobs:
           dotnet-version: ${{ inputs.dotnet_version }}
 
       - name: Test
-        run: dotnet test ${{ inputs.test_project_path }}
+        run: |
+          if [ "${{ inputs.no_build }}" = "true" ]; then
+            dotnet test ${{ inputs.test_project_path }} --no-build -c ${{ inputs.build_configuration }}
+          else
+            dotnet test ${{ inputs.test_project_path }} -c ${{ inputs.build_configuration }}
+          fi
