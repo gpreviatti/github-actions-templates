@@ -14,6 +14,9 @@ on:
       build_configuration:
         type: string
         default: 'Release'
+      verbosity:
+        type: string
+        default: 'n'
       name:
         type: string
         default: 'Unit Tests'
@@ -31,7 +34,7 @@ jobs:
       - name: Test
         run: |
           if [ "${{ inputs.no_build }}" = "true" ]; then
-            dotnet test ${{ inputs.test_project_path }} --no-build -c ${{ inputs.build_configuration }}
+            dotnet test ${{ inputs.test_project_path }} --no-build -c ${{ inputs.build_configuration }} -v ${{ inputs.verbosity }}
           else
-            dotnet test ${{ inputs.test_project_path }} -c ${{ inputs.build_configuration }}
+            dotnet test ${{ inputs.test_project_path }} -c ${{ inputs.build_configuration }} -v ${{ inputs.verbosity }}
           fi
