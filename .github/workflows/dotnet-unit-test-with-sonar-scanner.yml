@@ -83,7 +83,7 @@ jobs:
 
       - name: Run unit tests with coverage
         shell: powershell
-        run: dotnet test ${{ inputs.unit_test_project_path }} --no-build -v ${{ inputs.unit_test_verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover -c ${{ inputs.build_configuration }}
+        run: dotnet test ${{ inputs.unit_test_project_path }} -v ${{ inputs.unit_test_verbosity }} -c ${{ inputs.build_configuration }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: End SonarQube Cloud analysis
         if: ${{ always() }}
