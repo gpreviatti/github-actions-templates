@@ -31,10 +31,12 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
 
-      - name: Test
+      - name: Test With Build
+        if: ${{ !inputs.no_build }}
         run: |
-          if [ "${{ inputs.no_build }}" = "true" ]; then
-            dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} --no-build -c ${{ inputs.build_configuration }}
-          else
-            dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} -c ${{ inputs.build_configuration }}
-          fi
+          dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} --no-build -c ${{ inputs.build_configuration }}
+
+      - name: Test Without Build
+        if: ${{ inputs.no_build }}
+        run: |
+          dotnet test ${{ inputs.test_project_path }} -v ${{ inputs.verbosity }} -c ${{ inputs.build_configuration }}
