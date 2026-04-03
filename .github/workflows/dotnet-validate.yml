@@ -32,9 +32,11 @@ on:
         default: 'n'
       sonar_organization:
         type: string
+        default: ${{ github.repository_owner }}
       sonar_project:
         required: true
         type: string
+        default: ${{ github.repository }}
       sonar_host_url:
         type: string
         default: 'https://sonarcloud.io'
