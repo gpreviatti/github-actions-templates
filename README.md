@@ -4,6 +4,26 @@ Reusable GitHub Actions workflows for .NET projects.
 
 This repository provides `workflow_call` templates that can be referenced from other repositories to standardize CI/CD steps such as build, unit tests, integration tests, mutation tests, SonarQube Cloud analysis, packaging, and publishing.
 
+## Table of contents
+
+- [Available templates](#available-templates)
+  - [`dotnet-build.yml`](#dotnet-buildyml)
+  - [`dotnet-unit-test.yml`](#dotnet-unit-testyml)
+  - [`dotnet-unit-test-with-sonar-scanner.yml`](#dotnet-unit-test-with-sonar-scanneryml)
+  - [`dotnet-integration-test.yml`](#dotnet-integration-testyml)
+  - [`dotnet-mutation-test.yml`](#dotnet-mutation-testyml)
+  - [`dotnet-pack.yml`](#dotnet-packyml)
+  - [`dotnet-publish.yml`](#dotnet-publishyml)
+  - [`dotnet-validate-bff.yml`](#dotnet-validate-bffyml)
+  - [`dotnet-validate-contracts.yml`](#dotnet-validate-contractsyml)
+  - [`dotnet-validate-full.yml`](#dotnet-validate-fullyml)
+- [How to use from another repository](#how-to-use-from-another-repository)
+  - [Example: Full validation](#example-full-validation)
+  - [Example: BFF validation](#example-bff-validation)
+  - [Example: Publish package](#example-publish-package)
+- [Required secrets in caller repository](#required-secrets-in-caller-repository)
+- [Notes](#notes)
+
 ---
 
 ## Available templates
