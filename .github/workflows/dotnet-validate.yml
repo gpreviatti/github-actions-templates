@@ -30,9 +30,9 @@ on:
       unit_test_verbosity:
         type: string
         default: 'n'
-      organization:
+      sonar_organization:
         type: string
-      project:
+      sonar_project:
         required: true
         type: string
       sonar_host_url:
@@ -54,8 +54,8 @@ jobs:
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
     with:
-      organization: ${{ inputs.organization }}
-      project: ${{ inputs.project }}
+      organization: ${{ inputs.sonar_organization }}
+      project: ${{ inputs.sonar_project }}
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
