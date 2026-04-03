@@ -9,7 +9,7 @@ on:
         default: ${{ github.repository }}
       dotnet_version:
         type: string
-        default: '8.x'
+        default: '10.x'
       unit_test_verbosity:
         type: string
         default: 'n'

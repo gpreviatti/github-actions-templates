@@ -7,7 +7,7 @@ on:
       dotnet_version:
         required: true
         type: string
-        default: '8.x'
+        default: '10.x'
       no_build:
         type: boolean
         default: true
