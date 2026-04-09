@@ -17,6 +17,24 @@ on:
       name:
         type: string
         default: 'Mutation Tests'
+      publish_dashboard_report:
+        type: boolean
+        default: false
+      dashboard_project:
+        type: string
+        default: ''
+      dashboard_version:
+        type: string
+        default: ''
+      dashboard_module:
+        type: string
+        default: ''
+      dashboard_base_url:
+        type: string
+        default: 'https://dashboard.stryker-mutator.io'
+    secrets:
+      dashboard_api_key:
+        required: false
 
 jobs:
   mutation-tests:
@@ -32,4 +50,26 @@ jobs:
         run: dotnet tool install -g dotnet-stryker
 
       - name: Run Stryker
+        if: ${{ !inputs.publish_dashboard_report }}
         run: dotnet stryker -tp ${{inputs.test_project_path}} -f ${{inputs.stryker_config_path}} -V ${{inputs.log_level}}
+
+      - name: Run Stryker and generate JSON report
+        if: ${{ inputs.publish_dashboard_report }}
+        run: dotnet stryker -tp ${{inputs.test_project_path}} -f ${{inputs.stryker_config_path}} -V ${{inputs.log_level}} --reporter json
+
+      - name: Send report to Stryker dashboard (curl)
+        if: ${{ inputs.publish_dashboard_report }}
+        run: |
+          REPORT_FILE=$(find StrykerOutput -type f -name "mutation-report.json" | sort | tail -n 1)
+
+          if [ -z "$REPORT_FILE" ]; then
+            echo "mutation-report.json not found under StrykerOutput."
+            exit 1
+          fi
+
+          echo "Uploading mutation report to Stryker dashboard for project '$DASHBOARD_PROJECT' version '$DASHBOARD_VERSION'."
+          curl --fail --show-error --silent \
+            -X PUT "$DASHBOARD_BASE_URL/api/reports/$DASHBOARD_PROJECT/$DASHBOARD_VERSION?module=$DASHBOARD_MODULE" \
+            -H "Content-Type: application/json" \
+            -H "X-Api-Key: $DASHBOARD_API_KEY" \
+            -d "@$REPORT_FILE"
