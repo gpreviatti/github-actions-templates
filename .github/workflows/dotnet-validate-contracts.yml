@@ -28,6 +28,9 @@ on:
       stryker_dashboard_module:
         type: string
         default: ''
+      stryker_report_name:
+        type: string
+        default: 'mutation-tests-contracts-result.json'
       stryker_dashboard_base_url:
         type: string
         default: 'https://dashboard.stryker-mutator.io'
@@ -75,6 +78,7 @@ jobs:
       dashboard_version: ${{ inputs.stryker_dashboard_version }}
       dashboard_module: ${{ inputs.stryker_dashboard_module }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
+      report_name: ${{ inputs.stryker_report_name }}
     secrets:
       dashboard_api_key: ${{ secrets.stryker_dashboard_api_key }}
 

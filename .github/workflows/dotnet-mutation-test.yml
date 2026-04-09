@@ -20,6 +20,9 @@ on:
       publish_dashboard_report:
         type: boolean
         default: false
+      report_name:
+        type: string
+        default: 'mutation-report.json'
       dashboard_project:
         type: string
         default: ''
@@ -60,10 +63,10 @@ jobs:
       - name: Send report to Stryker dashboard (curl)
         if: ${{ inputs.publish_dashboard_report }}
         run: |
-          REPORT_FILE=$(find StrykerOutput -type f -name "mutation-report.json" | sort | tail -n 1)
+          REPORT_FILE=$(find StrykerOutput -type f -name "${{ inputs.report_name }}" | sort | tail -n 1)
 
           if [ -z "$REPORT_FILE" ]; then
-            echo "mutation-report.json not found under StrykerOutput."
+            echo "${{ inputs.report_name }} not found under StrykerOutput."
             exit 1
           fi
 
