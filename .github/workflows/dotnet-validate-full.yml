@@ -8,21 +8,39 @@ on:
         required: true
         type: string
         default: '10.x'
-      stryker_enable:
-        type: boolean
-        default: true
       test_no_build:
         type: boolean
         default: true
       unit_test_project_path:
         type: string
-      domain_stryker_config_path:
-        type: string
-      application_stryker_config_path:
-        type: string
+      stryker_enable:
+        type: boolean
+        default: true
       stryker_log_level:
         type: string
         default: 'info'
+      stryker_domain_config_path:
+        type: string
+      stryker_application_config_path:
+        type: string
+      stryker_publish_dashboard_report:
+        type: boolean
+        default: false
+      stryker_dashboard_project:
+        type: string
+        default: ''
+      stryker_dashboard_version:
+        type: string
+        default: ''
+      stryker_dashboard_module_domain:
+        type: string
+        default: ''
+      stryker_dashboard_module_application:
+        type: string
+        default: ''
+      stryker_dashboard_base_url:
+        type: string
+        default: 'https://dashboard.stryker-mutator.io'
       integration_test_project_path:
         type: string
       docker_compose_file_path:
@@ -44,6 +62,7 @@ on:
         default: 'https://sonarcloud.io'
     secrets:
       sonar_token:
+      stryker_dashboard_api_key:
 
 jobs:
   build:
@@ -70,26 +89,40 @@ jobs:
       sonar_token: ${{ secrets.sonar_token }}
 
   mutation-tests-domain:
-    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.domain_stryker_config_path != '' }}
+    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.stryker_domain_config_path != '' }}
     needs: build
     uses: ./.github/workflows/dotnet-mutation-test.yml
     with:
       test_project_path: ${{ inputs.unit_test_project_path }}
-      stryker_config_path: ${{ inputs.domain_stryker_config_path }}
+      stryker_config_path: ${{ inputs.stryker_domain_config_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
       name: 'Domain Mutation Tests'
+      publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
+      dashboard_project: ${{ inputs.stryker_dashboard_project }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version }}
+      dashboard_module: ${{ inputs.stryker_dashboard_module_domain }}
+      dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
+    secrets:
+      dashboard_api_key: ${{ secrets.stryker_dashboard_api_key }}
 
   mutation-tests-application:
-    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.application_stryker_config_path != '' }}
+    if: ${{ inputs.unit_test_project_path != '' && inputs.stryker_enable && inputs.stryker_application_config_path != '' }}
     needs: build
     uses: ./.github/workflows/dotnet-mutation-test.yml
     with:
       test_project_path: ${{ inputs.unit_test_project_path }}
-      stryker_config_path: ${{ inputs.application_stryker_config_path }}
+      stryker_config_path: ${{ inputs.stryker_application_config_path }}
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
       name: 'Application Mutation Tests'
+      publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
+      dashboard_project: ${{ inputs.stryker_dashboard_project }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version }}
+      dashboard_module: ${{ inputs.stryker_dashboard_module_application }}
+      dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
+    secrets:
+      dashboard_api_key: ${{ secrets.stryker_dashboard_api_key }}
 
   integration-test:
     if: ${{ inputs.integration_test_project_path != '' }}

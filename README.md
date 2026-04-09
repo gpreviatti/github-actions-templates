@@ -102,9 +102,18 @@ Runs mutation tests using Stryker.
 
 - `test_project_path` (string, required)
 - `stryker_config_path` (string, required)
-- `dotnet_version` (string, default: `10.x`)
+- `dotnet_version` (string, default: `8.x`)
 - `log_level` (string, default: `info`)
 - `name` (string, default: `Mutation Tests`)
+- `publish_dashboard_report` (boolean, default: `false`)
+- `dashboard_project` (string, optional, default: `''`)
+- `dashboard_version` (string, optional, default: `''`)
+- `dashboard_module` (string, optional, default: `''`)
+- `dashboard_base_url` (string, default: `https://dashboard.stryker-mutator.io`)
+
+**Secrets**
+
+- `dashboard_api_key` (optional; required when `publish_dashboard_report: true`)
 
 ---
 
@@ -172,9 +181,18 @@ Validation pipeline for contracts-focused repositories:
 - `stryker_enable` (boolean, default: `true`)
 - `stryker_config_path` (string, optional)
 - `stryker_log_level` (string, default: `info`)
+- `stryker_publish_dashboard_report` (boolean, default: `false`)
+- `stryker_dashboard_project` (string, optional, default: `''`)
+- `stryker_dashboard_version` (string, optional, default: `''`)
+- `stryker_dashboard_module` (string, optional, default: `''`)
+- `stryker_dashboard_base_url` (string, default: `https://dashboard.stryker-mutator.io`)
 - `test_no_build` (boolean, default: `true`)
 - `test_project_path` (string, optional)
 - `test_verbosity` (string, default: `n`)
+
+**Secrets**
+
+- `stryker_dashboard_api_key` (optional; required only when Stryker dashboard publishing is enabled)
 
 ---
 
@@ -194,9 +212,15 @@ Full validation pipeline:
 - `stryker_enable` (boolean, default: `true`)
 - `test_no_build` (boolean, default: `true`)
 - `unit_test_project_path` (string, optional)
-- `domain_stryker_config_path` (string, optional)
-- `application_stryker_config_path` (string, optional)
+- `stryker_domain_config_path` (string, optional)
+- `stryker_application_config_path` (string, optional)
 - `stryker_log_level` (string, default: `info`)
+- `stryker_publish_dashboard_report` (boolean, default: `false`)
+- `stryker_dashboard_project` (string, optional, default: `''`)
+- `stryker_dashboard_version` (string, optional, default: `''`)
+- `stryker_dashboard_module_domain` (string, optional, default: `''`)
+- `stryker_dashboard_module_application` (string, optional, default: `''`)
+- `stryker_dashboard_base_url` (string, default: `https://dashboard.stryker-mutator.io`)
 - `integration_test_project_path` (string, optional)
 - `docker_compose_file_path` (string, optional)
 - `unit_test_verbosity` (string, default: `n`)
@@ -208,6 +232,7 @@ Full validation pipeline:
 **Secrets**
 
 - `sonar_token` (optional unless Sonar validation is enabled and unit tests are executed)
+- `stryker_dashboard_api_key` (optional; required only when Stryker dashboard publishing is enabled)
 
 ---
 
@@ -234,8 +259,8 @@ jobs:
       dotnet_version: '10.x'
       build_path: '.'
       unit_test_project_path: tests/MyProject.UnitTests/MyProject.UnitTests.csproj
-      domain_stryker_config_path: tests/MyProject.UnitTests/stryker-domain.json
-      application_stryker_config_path: tests/MyProject.UnitTests/stryker-application.json
+      stryker_domain_config_path: tests/MyProject.UnitTests/stryker-domain.json
+      stryker_application_config_path: tests/MyProject.UnitTests/stryker-application.json
       integration_test_project_path: tests/MyProject.IntegrationTests/MyProject.IntegrationTests.csproj
       docker_compose_file_path: docker-compose.yml
       sonar_organization: my-sonar-org
@@ -244,10 +269,17 @@ jobs:
       sonar_validation: true
       stryker_enable: true
       stryker_log_level: info
+      stryker_publish_dashboard_report: true
+      stryker_dashboard_project: github.com/my-org/my-repo
+      stryker_dashboard_version: ${{ github.ref_name }}
+      stryker_dashboard_module_domain: domain
+      stryker_dashboard_module_application: application
+      stryker_dashboard_base_url: https://dashboard.stryker-mutator.io
       unit_test_verbosity: n
       test_no_build: true
     secrets:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+      stryker_dashboard_api_key: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 ```
 
 ### Example: BFF validation
@@ -297,6 +329,8 @@ Depending on the template used, configure and map:
 
 - `SONAR_TOKEN` → `sonar_token`
 - `NUGET_API_KEY` → `nuget_api_key`
+- `STRYKER_DASHBOARD_API_KEY` → `dashboard_api_key` (for `dotnet-mutation-test.yml`)
+- `STRYKER_DASHBOARD_API_KEY` → `stryker_dashboard_api_key` (for validate templates)
 
 (Secret names in your repository can differ, as long as they are mapped in the `secrets:` block of the calling workflow.)
 
@@ -305,7 +339,7 @@ Depending on the template used, configure and map:
 ## Notes
 
 - `dotnet-unit-test-with-sonar-scanner.yml` runs on `windows-latest`; most other templates run on `ubuntu-latest`.
-- Validation templates default to `.NET 10.x`, while base build/test/pack templates default to `.NET 10.x`.
+- Validation templates default to `.NET 10.x`; `dotnet-mutation-test.yml` currently defaults to `.NET 10.x`.
 - Pin reusable workflow references to a tag or commit SHA for safer, reproducible pipelines.
 
 Happy automating 🚀
