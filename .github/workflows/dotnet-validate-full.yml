@@ -84,7 +84,7 @@ jobs:
     needs: build
     with:
       organization: ${{ inputs.organization || github.repository_owner }}
-      project: ${{ inputs.project || github.repository }}
+      project: ${{ inputs.project || github.event.repository.name }}
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}

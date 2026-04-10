@@ -6,7 +6,7 @@ on:
         default: ${{ github.repository_owner }}
       project:
         type: string
-        default: ${{ github.repository }}
+        default: ${{ github.event.repository.name }}
       dotnet_version:
         type: string
         default: '10.x'
