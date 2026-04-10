@@ -106,7 +106,7 @@ jobs:
       name: 'Domain Mutation Tests'
       publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
       dashboard_project: ${{ inputs.stryker_dashboard_project || format('github.com/{0}', github.repository) }}
-      dashboard_version: ${{ inputs.stryker_dashboard_version || github.run_number }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version || github.ref_name}}
       dashboard_module: ${{ inputs.stryker_dashboard_module_domain }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
       report_name: ${{ inputs.stryker_domain_report_name }}
@@ -125,7 +125,7 @@ jobs:
       name: 'Application Mutation Tests'
       publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
       dashboard_project: ${{ inputs.stryker_dashboard_project || format('github.com/{0}', github.repository) }}
-      dashboard_version: ${{ inputs.stryker_dashboard_version || github.run_number }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version || github.ref_name}}
       dashboard_module: ${{ inputs.stryker_dashboard_module_application }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
       report_name: ${{ inputs.stryker_application_report_name }}

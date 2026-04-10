@@ -74,7 +74,7 @@ jobs:
       log_level: ${{ inputs.stryker_log_level }}
       publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
       dashboard_project: ${{ inputs.stryker_dashboard_project || format('github.com/{0}', github.repository) }}
-      dashboard_version: ${{ inputs.stryker_dashboard_version || github.run_number }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version || github.ref_name }}
       dashboard_module: ${{ inputs.stryker_dashboard_module }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
       report_name: ${{ inputs.stryker_report_name }}
