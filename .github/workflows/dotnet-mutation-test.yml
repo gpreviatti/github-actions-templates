@@ -70,9 +70,9 @@ jobs:
             exit 1
           fi
 
-          echo "Uploading mutation report to Stryker dashboard for project '${{ inputs.dashboard_project || format('github.com/{0}/{1}', github.repository_owner, github.repository) }}' version '${{ inputs.dashboard_version || github.run_number }}'."
+          echo "Uploading mutation report to Stryker dashboard for project '${{ inputs.dashboard_project || format('github.com/{0}', github.repository) }}' version '${{ inputs.dashboard_version || github.run_number }}'."
           curl --fail --show-error --silent \
-            -X PUT "$DASHBOARD_BASE_URL/api/reports/${{ inputs.dashboard_project || format('github.com/{0}/{1}', github.repository_owner, github.repository) }}/${{ inputs.dashboard_version || github.run_number }}?module=${{ inputs.dashboard_module }}" \
+            -X PUT "$DASHBOARD_BASE_URL/api/reports/${{ inputs.dashboard_project || format('github.com/{0}', github.repository) }}/${{ inputs.dashboard_version || github.run_number }}?module=${{ inputs.dashboard_module }}" \
             -H "Content-Type: application/json" \
             -H "X-Api-Key: ${{ secrets.dashboard_api_key }}" \
             -d "@$REPORT_FILE"
