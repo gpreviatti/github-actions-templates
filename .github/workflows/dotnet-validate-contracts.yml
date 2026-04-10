@@ -1,12 +1,6 @@
 on:
   workflow_call:
     inputs:
-      organization:
-        type: string
-        default: ${{ github.repository_owner }}
-      project:
-        type: string
-        default: ${{ github.repository }}
       build_path:
         type: string
         default: '.'
@@ -25,6 +19,9 @@ on:
       stryker_publish_dashboard_report:
         type: boolean
         default: false
+      stryker_dashboard_project:
+        type: string
+        default: ${{ github.com/inputs.repository_owner/github.repository }}
       stryker_dashboard_version:
         type: string
         default: ${{ github.run_number }}
@@ -64,7 +61,6 @@ jobs:
       dotnet_version: ${{ inputs.dotnet_version }}
       verbosity: ${{ inputs.test_verbosity }}
       no_build: ${{ inputs.test_no_build }}
-      build_configuration: 'Release'
 
   mutation-tests:
     if: ${{ inputs.stryker_enable && inputs.stryker_config_path != '' }}
@@ -77,7 +73,7 @@ jobs:
       dotnet_version: ${{ inputs.dotnet_version }}
       log_level: ${{ inputs.stryker_log_level }}
       publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
-      dashboard_project: ${{ inputs.project || github.repository }}
+      dashboard_project: ${{ inputs.stryker_dashboard_project || github.com/inputs.repository_owner/github.repository }}
       dashboard_version: ${{ inputs.stryker_dashboard_version || github.run_number }}
       dashboard_module: ${{ inputs.stryker_dashboard_module }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
