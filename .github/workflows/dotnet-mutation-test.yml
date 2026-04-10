@@ -20,12 +20,12 @@ on:
       publish_dashboard_report:
         type: boolean
         default: false
+      dashboard_project:
+        type: string
+        default: ${{ github.repository }}
       report_name:
         type: string
         default: 'mutation-report.json'
-      dashboard_project:
-        type: string
-        default: ''
       dashboard_version:
         type: string
         default: ''
@@ -70,9 +70,9 @@ jobs:
             exit 1
           fi
 
-          echo "Uploading mutation report to Stryker dashboard for project '$DASHBOARD_PROJECT' version '$DASHBOARD_VERSION'."
+          echo "Uploading mutation report to Stryker dashboard for project '${{ inputs.dashboard_project || github.repository }}' version '${{ inputs.dashboard_version || github.run_number }}'."
           curl --fail --show-error --silent \
-            -X PUT "$DASHBOARD_BASE_URL/api/reports/$DASHBOARD_PROJECT/$DASHBOARD_VERSION?module=$DASHBOARD_MODULE" \
+            -X PUT "$DASHBOARD_BASE_URL/api/reports/${{ inputs.dashboard_project || github.repository }}/${{ inputs.dashboard_version || github.run_number }}?module=${{ inputs.dashboard_module }}" \
             -H "Content-Type: application/json" \
-            -H "X-Api-Key: $DASHBOARD_API_KEY" \
+            -H "X-Api-Key: ${{ secrets.dashboard_api_key }}" \
             -d "@$REPORT_FILE"

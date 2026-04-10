@@ -1,6 +1,12 @@
 on:
   workflow_call:
     inputs:
+      organization:
+        type: string
+        default: ${{ github.repository_owner }}
+      project:
+        type: string
+        default: ${{ github.repository }}
       build_path:
         type: string
         default: '.'
@@ -54,15 +60,9 @@ on:
       unit_test_verbosity:
         type: string
         default: 'n'
-      sonar_organization:
-        type: string
-        default: ${{ github.repository_owner }}
       sonar_validation:
         type: boolean
         default: true
-      sonar_project:
-        type: string
-        default: ${{ github.repository }}
       sonar_host_url:
         type: string
         default: 'https://sonarcloud.io'
@@ -83,8 +83,8 @@ jobs:
     uses: ./.github/workflows/dotnet-unit-test-with-sonar-scanner.yml
     needs: build
     with:
-      organization: ${{ inputs.sonar_organization || github.repository_owner }}
-      project: ${{ inputs.sonar_project || github.repository }}
+      organization: ${{ inputs.organization || github.repository_owner }}
+      project: ${{ inputs.project || github.repository }}
       dotnet_version: ${{ inputs.dotnet_version }}
       unit_test_verbosity: ${{ inputs.unit_test_verbosity }}
       unit_test_project_path: ${{ inputs.unit_test_project_path }}
@@ -105,8 +105,8 @@ jobs:
       log_level: ${{ inputs.stryker_log_level }}
       name: 'Domain Mutation Tests'
       publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
-      dashboard_project: ${{ inputs.stryker_dashboard_project }}
-      dashboard_version: ${{ inputs.stryker_dashboard_version }}
+      dashboard_project: ${{ inputs.project || github.repository }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version || github.run_number }}
       dashboard_module: ${{ inputs.stryker_dashboard_module_domain }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
       report_name: ${{ inputs.stryker_domain_report_name }}
@@ -124,8 +124,8 @@ jobs:
       log_level: ${{ inputs.stryker_log_level }}
       name: 'Application Mutation Tests'
       publish_dashboard_report: ${{ inputs.stryker_publish_dashboard_report }}
-      dashboard_project: ${{ inputs.stryker_dashboard_project }}
-      dashboard_version: ${{ inputs.stryker_dashboard_version }}
+      dashboard_project: ${{ inputs.project || github.repository }}
+      dashboard_version: ${{ inputs.stryker_dashboard_version || github.run_number }}
       dashboard_module: ${{ inputs.stryker_dashboard_module_application }}
       dashboard_base_url: ${{ inputs.stryker_dashboard_base_url }}
       report_name: ${{ inputs.stryker_application_report_name }}
