@@ -60,7 +60,7 @@ jobs:
         if: ${{ inputs.publish_dashboard_report }}
         run: dotnet stryker -tp ${{inputs.test_project_path}} -f ${{inputs.stryker_config_path}} -V ${{inputs.log_level}} --reporter json
 
-      - name: Send report to Stryker dashboard (curl)
+      - name: Send report to Stryker dashboard
         if: ${{ inputs.publish_dashboard_report }}
         run: |
           REPORT_FILE=$(find StrykerOutput -type f -name "${{ inputs.report_name }}" | sort | tail -n 1)
@@ -72,7 +72,7 @@ jobs:
 
           echo "Uploading mutation report to Stryker dashboard for project '${{ inputs.dashboard_project || format('github.com/{0}', github.repository) }}' version '${{ inputs.dashboard_version || github.run_number }}'."
           curl --fail --show-error --silent \
-            -X PUT "$DASHBOARD_BASE_URL/api/reports/${{ inputs.dashboard_project || format('github.com/{0}', github.repository) }}/${{ inputs.dashboard_version || github.run_number }}?module=${{ inputs.dashboard_module }}" \
+            -X PUT "${{ inputs.dashboard_base_url }}/api/reports/${{ inputs.dashboard_project || format('github.com/{0}', github.repository) }}/${{ inputs.dashboard_version || github.run_number }}?module=${{ inputs.dashboard_module }}" \
             -H "Content-Type: application/json" \
             -H "X-Api-Key: ${{ secrets.dashboard_api_key }}" \
             -d "@$REPORT_FILE"
