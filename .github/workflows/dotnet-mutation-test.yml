@@ -22,7 +22,7 @@ on:
         default: false
       dashboard_project:
         type: string
-        default: ${{ github.repository }}
+        default: ${{ github.com/github.repository_owner/github.repository }}
       report_name:
         type: string
         default: 'mutation-report.json'
